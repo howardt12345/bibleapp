@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "458158160130",
+    "firebase_url": "https://bible-app-a0eaf.firebaseio.com",
+    "project_id": "bible-app-a0eaf",
+    "storage_bucket": "bible-app-a0eaf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458158160130:android:d43fab2cae0332b6",
+        "android_client_info": {
+          "package_name": "com.howardt12345.bible"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "458158160130-kkcrpmvtlch29dvug41fj0nln58u82ap.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBknNnlcdC6R7qFVgk7oEtMZgGlR2ryiOY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

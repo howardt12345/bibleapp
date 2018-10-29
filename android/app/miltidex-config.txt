@@ -1,0 +1,1 @@
+com/howardt12345/bible/MainActivity.class

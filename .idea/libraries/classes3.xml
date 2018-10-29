@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="classes3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/firebase_remote_config/intermediates/bundles/debug/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

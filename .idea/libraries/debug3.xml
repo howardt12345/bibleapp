@@ -1,0 +1,62 @@
+<component name="libraryTable">
+  <library name="debug3">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/29.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/365.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/445.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/11.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/374.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/411.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/402.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/419.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/444.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/28.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/401.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/372.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/364.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/382.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/399.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/410.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/373.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/10.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/397.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/418.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/421.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/405.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/370.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/398.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/404.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/422.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/417.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/383.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/396.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/420.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/403.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/416.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/371.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/407.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/415.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/441.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/406.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/31.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/369.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/423.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/32.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/414.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/443.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/30.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/69.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/409.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/413.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/400.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/358.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/408.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/68.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/412.jar!/" />
+      <root url="jar://$PROJECT_DIR$/build/app/intermediates/transforms/dexBuilder/debug/442.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

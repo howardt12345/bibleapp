@@ -18,6 +18,7 @@ dependencies:
   firebase_storage: any
   flutter_facebook_login: any
   flutter_search_bar: any
+  flutter_swiper: any
   google_sign_in: any
   html: any
   html_unescape: any
@@ -30,7 +31,6 @@ dependencies:
   shared_preferences: any
   simple_permissions: any
   sortedmap: any
-  flutter_swiper: any
   sqflite: any
   tuple: any
   url_launcher: any

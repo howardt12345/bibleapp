@@ -6,7 +6,6 @@ import 'package:barcode_scan/barcode_scan.dart';
 import 'package:bible/ui/account/profile.dart';
 import 'package:bible/ui/account/sign_in_prompt.dart';
 import 'package:bible/ui/plan/plan_manager.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_database/ui/firebase_list.dart';

@@ -7,7 +7,6 @@ import 'dart:math';
 import 'package:bible/ui/account/profile.dart';
 import 'package:bible/ui/page_manager.dart';
 import 'package:bible/ui/plan/qr.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_database/ui/firebase_list.dart';

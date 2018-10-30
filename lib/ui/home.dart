@@ -48,6 +48,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                       chapterScrollView;
 
   PageController pageController = new PageController(initialPage: 1);
+  SwiperController swipeController = new SwiperController();
+
 
   @override
   void initState() {
@@ -293,6 +295,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                 });
               },
               child: Swiper(
+                controller: swipeController,
                 index: bible.index(book, chapter),
                 itemCount: bible.chaptersLength(),
                 itemBuilder: (BuildContext context, int index) => FutureBuilder(
@@ -480,6 +483,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       chapterController.jumpToItem(chapter);
     }
     //pageController.animateToPage(1, duration: Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
+    swipeController.move(bible.index(book, chapter), animation: false);
+
     logEvent('bible_opened', {'book': book, 'chapter': chapter, 'toText': bible.chapterAsText(new Tuple2(book, chapter))});
 
     //prefs.setInt(versePrefs, verse);

@@ -382,7 +382,7 @@ class Bible {
   }
 
   length() => books.length;
-  chaptersLength() => books.values.toList().last.chapters.last.index;
+  chaptersLength() => books.values.toList().last.chapters.last.index+1;
 }
 
 class PassageChecker {

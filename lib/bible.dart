@@ -331,7 +331,7 @@ class Bible {
     return await database
         .rawQuery("SELECT book,verse,unformatted "
         "FROM verses "
-        "WHERE unformatted LIKE '%$query%'");
+        "WHERE unformatted LIKE '%$query%' COLLATE NOCASE");
   }
 
   Future<List<Map>> getVerses(List<Tuple3> verses) async {

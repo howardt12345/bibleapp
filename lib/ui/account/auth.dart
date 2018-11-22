@@ -18,7 +18,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:bible/ui/app.dart' as app;
 import 'package:bible/ui/plan_manager_page.dart' as plan;
 
-final FacebookLogin _facebookSignIn = new FacebookLogin();
+final _facebookSignIn = new FacebookLogin();
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = new GoogleSignIn();
 final DatabaseReference userRef = FirebaseDatabase.instance.reference().child('users');
@@ -29,6 +29,24 @@ enum SignInMethod {
   google,
   facebook,
   email,
+}
+
+Future<FirebaseUser> signInMethod(SignInMethod method, {
+    bool signUp = false,
+    String name,
+    String email,
+    String password,
+  }) {
+  switch(method) {
+    case SignInMethod.email:
+      return signInWithEmail(email: email, password: password, signUp: signUp, displayName: name);
+    case SignInMethod.google:
+      return signInWithGoogle();
+    case SignInMethod.facebook:
+      return signInWithFacebook();
+    default:
+      return null;
+  }
 }
 
 Future<FirebaseUser> signInWithGoogle() async {

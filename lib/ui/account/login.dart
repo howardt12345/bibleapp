@@ -433,11 +433,7 @@ class LoadingScreen extends StatelessWidget {
     return new Scaffold(
       body: new Center(
         child: new FutureBuilder<FirebaseUser>(
-          future: method == SignInMethod.email
-              ? auth.signInWithEmail(email: email, password: password, signUp: signUp, displayName: name)
-              : method == SignInMethod.google
-              ? auth.signInWithGoogle()
-              : auth.signInWithFacebook(),
+          future: auth.signInMethod(method, email: email, password: password, signUp: signUp, name: name),
           builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
             switch(snapshot.connectionState) {
               case ConnectionState.waiting:

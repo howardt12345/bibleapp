@@ -61,11 +61,11 @@ class _PassageEditPageState extends State<PassageEditPage> {
   getIndex() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      tmpBook = book = prefs.getInt(bookPrefs) ?? home.book;
+      tmpBook = book = prefs.getInt(bookPrefs) ?? home.book ?? 0;
       tmpChapter = chapter = ((prefs.getInt(chapterPrefs) ?? 0) >=
           bible.books[bible.books.keys.toList()[book]].length()
           ? bible.books[bible.books.keys.toList()[book]].length() - 1
-          : prefs.getInt(chapterPrefs)) ?? home.chapter;
+          : prefs.getInt(chapterPrefs)) ?? home.chapter ?? 0;
 
       radioValue = prefs.getInt(radioValuePrefs) ?? 1;
 

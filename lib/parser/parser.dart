@@ -24,7 +24,6 @@ class Parser {
 
   bool debug = false;
 
-  //List<Widget> _widgets = [];
   List<Widget> _widgets = [];
   List<TextSpan> _currentTextSpans = [];
 
@@ -124,7 +123,7 @@ class Parser {
             }
           } else {
             element.nodes.forEach((subNode) => _parseNode(subNode));
-            _tryCloseCurrentTextSpan(newLine: true);
+            _tryCloseCurrentTextSpan(newLine: false);
           }
         } else {
           element.nodes.forEach((subNode) => _parseNode(subNode));

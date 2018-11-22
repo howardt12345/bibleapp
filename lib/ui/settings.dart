@@ -174,6 +174,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: new Builder(
                     builder: (BuildContext context) {
                       return new CollapsibleBody(
+                        cancel: getString('settings_cancel'),
+                        save: getString('settings_save'),
                         onSave: () { Form.of(context).save(); close(); },
                         onCancel: () { Form.of(context).reset(); close(); },
                         child: new FormField<AppTheme>(
@@ -469,6 +471,7 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     fetchConfig();
+
     return new Scaffold(
       body: new SafeArea(
         child: new Stack(

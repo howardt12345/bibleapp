@@ -237,7 +237,7 @@ class Bible {
     }
   }
 
-  Future<Widget> getPageIndex(BuildContext context, int index, {int start, int end}) async {
+  Future<Widget> getPageIndex(BuildContext context, int index, {int start, int end, Orientation orientation = Orientation.portrait}) async {
     try {
       Tuple2 corrected = fromIndex(index);
 
@@ -256,9 +256,9 @@ class Bible {
           ? new Column(
         children: <Widget>[
           start == null || end == null ? new Container(
-            height: fontSize*8,
+            height: orientation == Orientation.portrait ? fontSize*8 : fontSize*4,
             margin: EdgeInsets.only(
-              top: fontSize*2,
+              top: orientation == Orientation.portrait ? fontSize*2 : fontSize,
               bottom: fontSize,
             ),
             child: new Center(
@@ -284,7 +284,7 @@ class Bible {
               ),
             ),
           ) : new Container(
-            height: (fontSize*1.25)*2,
+            height: fontSize*2.5,
             margin: EdgeInsets.only(top: appBarAtTop ? 56.0 : 0.0),
             child: new Center(
               child: new RichText(
@@ -317,7 +317,7 @@ class Bible {
             ).fromHtml(data[0]['content']),
           ),
         ],
-      ) : new Center(
+      ): new Center(
         child: new CircularProgressIndicator(),
       );
     } catch(e) {

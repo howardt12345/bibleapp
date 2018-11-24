@@ -37,7 +37,7 @@ class GenerateScreenState extends State<QRDialog> {
           ) : RepaintBoundary(
             key: globalKey,
             child: QrImage(
-              backgroundColor: Theme.of(context).cardColor,
+              backgroundColor: Color.fromRGBO(255, 255, 255, 1.0),
               data: widget.data,
             ),
           ),

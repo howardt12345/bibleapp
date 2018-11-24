@@ -30,6 +30,7 @@ import 'package:bible/ui/settings.dart';
 import 'package:bible/ui/versions.dart';
 
 class PlanManager {
+
   List<Plan> plans = new List<Plan>();
 
   DatabaseReference planRef, userRef, progressRef;
@@ -66,7 +67,7 @@ class PlanManager {
               plans.clear();
 
               return FutureBuilder(
-                future: Future.wait(planIds.map((id) async => await planRef.child(id).once().then((onValue) async {
+                future: /*Future.wait(planIds.map((id) async => await planRef.child(id).once().then((onValue) async {
                   print('${onValue.key}, ${onValue.value}');
 
                   var progress = (await progressRef.child(onValue.key).child(user.uid).once()).value;
@@ -74,7 +75,15 @@ class PlanManager {
                   Plan plan = new Plan.fromJson(onValue.key, onValue.value, progress);
                   await getProgress(plan);
                   plans.add(plan);
-                }))),
+                })))*/Future.forEach(planIds, (id) async => await planRef.child(id).once().then((onValue) async {
+                  print('${onValue.key}, ${onValue.value}');
+
+                  var progress = (await progressRef.child(onValue.key).child(user.uid).once()).value;
+
+                  Plan plan = new Plan.fromJson(onValue.key, onValue.value, progress);
+                  await getProgress(plan);
+                  plans.add(plan);
+                })),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   switch(snapshot.connectionState) {
                     case ConnectionState.waiting:
@@ -104,9 +113,8 @@ class PlanManager {
                   new ListTile(
                     contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     onTap: () {
-                      RemoteConfig _config = PageManager.of(context).widget.remoteConfig;
                       Navigator.of(context).push(
-                          new FadeAnimationRoute(builder: (context) => PlanInfoPage(_config, plan: plan))
+                          new FadeAnimationRoute(builder: (context) => PlanInfoPage(plan: plan))
                       );
                     },
                     title: new RichText(
@@ -135,11 +143,9 @@ class PlanManager {
                           ? new FlatButton(
                           child: new Text('DAY ${DateTime.now().difference(plan.startingDate).inDays+1} OF ${plan.days.length}'),
                           onPressed: () {
-                            RemoteConfig _config = PageManager.of(context).widget.remoteConfig;
                             Navigator.of(context).push(
                                 new FadeAnimationRoute(
                                     builder: (context) => PlanDaysPage(
-                                        _config,
                                         plan: plan,
                                         index: DateTime.now().difference(plan.startingDate).inDays
                                     )
@@ -150,9 +156,8 @@ class PlanManager {
                         child: new Text('START'),
                         onPressed: () {
                           plan.startPlan();
-                          RemoteConfig _config = PageManager.of(context).widget.remoteConfig;
                           Navigator.of(context).push(
-                              new FadeAnimationRoute(builder: (context) => PlanDaysPage(_config, plan: plan, index: 0))
+                              new FadeAnimationRoute(builder: (context) => PlanDaysPage(plan: plan, index: 0))
                           );
                         },
                       ) : new Container(),
@@ -163,17 +168,15 @@ class PlanManager {
                             plan.canEdit ? new IconButton(
                               icon: new Icon(Icons.edit),
                               onPressed: () {
-                                RemoteConfig _config = PageManager.of(context).widget.remoteConfig;
                                 Navigator.of(context).push(
-                                    new FadeAnimationRoute(builder: (context) => PlanEditPage(_config, plan: plan))
+                                    new FadeAnimationRoute(builder: (context) => PlanEditPage(plan: plan))
                                 );
                               },
                             ) : new Container(),
                             user != null ? new IconButton(
                               icon: new Icon(Icons.share),
                               onPressed: () {
-                                RemoteConfig _config = PageManager.of(context).widget.remoteConfig;
-                                sharePlan(plan, context, _config);
+                                sharePlan(plan, context);
                               },
                             ) : new Container(),
                           ],
@@ -323,10 +326,10 @@ class PlanManager {
     }
   }
   
-  sharePlan(Plan plan, BuildContext context, RemoteConfig _config) {
+  sharePlan(Plan plan, BuildContext context) {
     return showDialog<Tuple2>(
       context: context,
-      builder: (BuildContext context) => SharePlanDialog(_config),
+      builder: (BuildContext context) => SharePlanDialog(),
     ).then<void>((Tuple2 value) async {
       switch(value.item1) {
         case 1:
@@ -417,9 +420,6 @@ String randomString(int length) {
 
 class SharePlanDialog extends StatefulWidget {
 
-  final RemoteConfig remoteConfig;
-  SharePlanDialog(this.remoteConfig);
-
   @override
   _SharePlanDialogState createState() => _SharePlanDialogState();
 }
@@ -429,7 +429,7 @@ class _SharePlanDialogState extends State<SharePlanDialog> {
   @override
   Widget build(BuildContext context) {
     return new SimpleDialog(
-      title: new Text(widget.remoteConfig.getString('plan_edit_add')),
+      title: new Text(remoteConfig.getString('plan_edit_add')),
       children: <Widget>[
         new ListTile(
           title: new RichText(

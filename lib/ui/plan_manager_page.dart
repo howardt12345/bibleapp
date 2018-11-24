@@ -35,12 +35,7 @@ bool signInPrompt = false;
 
 PlanManager planManager = new PlanManager();
 
-
 class PlanManagerPage extends StatefulWidget {
-
-  final RemoteConfig remoteConfig;
-
-  PlanManagerPage(this.remoteConfig);
 
   @override
   PlanManagerPageState createState() => new PlanManagerPageState();
@@ -62,9 +57,8 @@ class PlanManagerPageState extends State<PlanManagerPage> {
           prefs.setBool('sign_in_prompt', true);
           switch(action) {
             case DialogAction.confirm:
-              RemoteConfig _config = widget.remoteConfig;
               Navigator.of(context).push(
-                  new FadeAnimationRoute(builder: (context) => LoginPage(_config))
+                  new FadeAnimationRoute(builder: (context) => LoginPage())
               ).then((onValue) {
                 setState(() {
                 });
@@ -79,14 +73,10 @@ class PlanManagerPageState extends State<PlanManagerPage> {
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {
@@ -116,9 +106,8 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                   icon: new Icon(Icons.add),
                   onPressed: () {
                     print('add');
-                    RemoteConfig _config = widget.remoteConfig;
                     Navigator.of(context).push(
-                        new FadeAnimationRoute(builder: (context) => PlanEditPage(_config, add: true))
+                        new FadeAnimationRoute(builder: (context) => PlanEditPage(add: true))
                     ).then((onValue) {
                       setState(() {
                         if(onValue != null)
@@ -135,18 +124,17 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                   icon: new Icon(Icons.menu),
                   onPressed: () async {
                     print('menu');
-                    RemoteConfig _config = widget.remoteConfig;
                     FirebaseUser user = await FirebaseAuth.instance.currentUser();
                     if(user != null) {
                       Navigator.of(context).push(
-                          new FadeAnimationRoute(builder: (context) => ProfilePage(_config))
+                          new FadeAnimationRoute(builder: (context) => ProfilePage())
                       ).then((onValue) {
                         setState(() {
                         });
                       });
                     } else {
                       Navigator.of(context).push(
-                          new FadeAnimationRoute(builder: (context) => LoginPage(_config))
+                          new FadeAnimationRoute(builder: (context) => LoginPage())
                       ).then((onValue) {
                         setState(() {
                         });
@@ -165,23 +153,19 @@ class PlanManagerPageState extends State<PlanManagerPage> {
 
     return defaultVersion.isNotEmpty
         ?  new Scaffold(
-      body: new SafeArea(
-        child: new Stack(
-          children: <Widget>[
-            RefreshIndicator(
-              onRefresh: () async {
-                setState(() {});
-                return null;
-              },
-              child: new ListView(
+      body: OrientationBuilder(
+        builder: (context, orientation) => new SafeArea(
+          child: new Stack(
+            children: <Widget>[
+              new ListView(
                 children: <Widget>[
                   new Container(
-                    height: fontSize*8,
-                    margin: EdgeInsets.only(top: fontSize*4),
+                    height: orientation == Orientation.portrait ? fontSize*8 : fontSize*4,
+                    margin: EdgeInsets.only(top: orientation == Orientation.portrait ? fontSize*2 : fontSize),
                     child: new Center(
                       child: new RichText(
                         text: new TextSpan(
-                          text: widget.remoteConfig.getString('title_plan'),
+                          text: getString('title_plan'),
                           style: Theme.of(context).textTheme.body1.copyWith(
                             fontSize: fontSize*2,
                           ),
@@ -196,61 +180,61 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                   new Container(height: 56.0),
                 ],
               ),
-            ),
-            appBarAtTop ? new Align(
-              alignment: Alignment.topCenter,
-              child: new Stack(
-                children: <Widget>[
-                  new IgnorePointer(
-                    child: new Align(
-                      alignment: Alignment.topCenter,
-                      child: new Container(
-                        decoration: new BoxDecoration(
-                          gradient: new LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Theme.of(context).canvasColor, Theme.of(context).canvasColor.withAlpha(0)],
-                            tileMode: TileMode.repeated,
+              appBarAtTop ? new Align(
+                alignment: Alignment.topCenter,
+                child: new Stack(
+                  children: <Widget>[
+                    new IgnorePointer(
+                      child: new Align(
+                        alignment: Alignment.topCenter,
+                        child: new Container(
+                          decoration: new BoxDecoration(
+                            gradient: new LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Theme.of(context).canvasColor, Theme.of(context).canvasColor.withAlpha(0)],
+                              tileMode: TileMode.repeated,
+                            ),
                           ),
+                          height: 56.0,
                         ),
-                        height: 56.0,
                       ),
                     ),
-                  ),
-                  new Align(
-                    alignment: Alignment.topLeft,
-                    child: appBar,
-                  ),
-                ],
-              ),
-            ) : new Align(
-              alignment: Alignment.bottomCenter,
-              child: new Stack(
-                children: <Widget>[
-                  new IgnorePointer(
-                    child: new Align(
+                    new Align(
+                      alignment: Alignment.topLeft,
+                      child: appBar,
+                    ),
+                  ],
+                ),
+              ) : new Align(
+                alignment: Alignment.bottomCenter,
+                child: new Stack(
+                  children: <Widget>[
+                    new IgnorePointer(
+                      child: new Align(
+                        alignment: Alignment.bottomCenter,
+                        child: new Container(
+                          decoration: new BoxDecoration(
+                            gradient: new LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
+                              tileMode: TileMode.repeated,
+                            ),
+                          ),
+                          height: 56.0,
+                        ),
+                      ),
+                    ),
+                    new Align(
                       alignment: Alignment.bottomCenter,
-                      child: new Container(
-                        decoration: new BoxDecoration(
-                          gradient: new LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
-                            tileMode: TileMode.repeated,
-                          ),
-                        ),
-                        height: 56.0,
-                      ),
+                      child: appBar,
                     ),
-                  ),
-                  new Align(
-                    alignment: Alignment.bottomCenter,
-                    child: appBar,
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButton: addButtonFAB ? FloatingActionButton.extended(
@@ -258,13 +242,11 @@ class PlanManagerPageState extends State<PlanManagerPage> {
         label: new Text(getString('plan_add_plan')),
         onPressed: () {
           print('add');
-          RemoteConfig _config = widget.remoteConfig;
-
           if(user != null) {
             showDialog<int>(
               context: context,
               builder: (BuildContext context) => new SimpleDialog(
-                title: new Text(_config.getString('plan_edit_add')),
+                title: new Text(getString('plan_edit_add')),
                 children: <Widget>[
                   new ListTile(
                     onTap: () => Navigator.pop(context, 1),
@@ -295,7 +277,7 @@ class PlanManagerPageState extends State<PlanManagerPage> {
             ).then<void>((int value) async {
               switch(value) {
                 case 1:
-                  planEdit(_config);
+                  planEdit(context);
                   break;
                 case 2:
                   bool res = (await SimplePermissions.requestPermission(Permission.Camera)) == PermissionStatus.authorized;
@@ -319,7 +301,7 @@ class PlanManagerPageState extends State<PlanManagerPage> {
               }
             });
           } else {
-            planEdit(_config);
+            planEdit(context);
           }
         },
         elevation: 2.0,
@@ -367,10 +349,9 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                     onPressed: () {
                       fetchConfig();
                       String url = getString('bible_download');
-                      RemoteConfig _config = widget.remoteConfig;
                       Navigator.of(context).push(
                         new FadeAnimationRoute(builder: (context) =>
-                          VersionsPage(url, _config))
+                          VersionsPage(url))
                       );
                     },
                     child: new Text(
@@ -422,9 +403,9 @@ class PlanManagerPageState extends State<PlanManagerPage> {
     );
   }
 
-  planEdit(RemoteConfig config) {
+  planEdit(BuildContext context) {
     Navigator.of(context).push(
-        new FadeAnimationRoute(builder: (context) => PlanEditPage(config, add: true))
+        new FadeAnimationRoute(builder: (context) => PlanEditPage(add: true))
     ).then((onValue) {
       setState(() {
       });

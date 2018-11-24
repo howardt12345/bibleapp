@@ -98,10 +98,6 @@ String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
 class SettingsPage extends StatefulWidget {
   static _SettingsPageState of(BuildContext context) => context.ancestorStateOfType(new TypeMatcher<_SettingsPageState>());
 
-  final RemoteConfig remoteConfig;
-
-  SettingsPage(this.remoteConfig);
-
   @override
   _SettingsPageState createState() => new _SettingsPageState();
 }
@@ -459,185 +455,181 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {
     fetchConfig();
 
     return new Scaffold(
-      body: new SafeArea(
-        child: new Stack(
-          children: <Widget>[
-            new ListView(
+      body: OrientationBuilder(
+        builder: (context, orientation) => new SafeArea(
+            child: new Stack(
               children: <Widget>[
-                new Container(height: 28.0),
-                new Container(
-                  height: fontSize*2,
-                  child: new Align(
-                    alignment: Alignment.centerRight,
-                    child: new FlatButton(
-                      onPressed: () {
-                        fetchConfig();
-                        String url = getString('bible_download');
-                        RemoteConfig _config = widget.remoteConfig;
-                        Navigator.of(context).push(
-                            new FadeAnimationRoute(builder: (context) => VersionsPage(url, _config))
-                        );
-                      },
-                      child: new Text(
-                          getString('settings_manage_versions')
-                      ),
-                    ),
-                  ),
-                  color: Theme.of(context).canvasColor,
-                ),
-                new Container(
-                  height: fontSize*4,
-                  margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.15 - 56.0),
-                  child: new Center(
-                    child: new RichText(
-                      text: new TextSpan(
-                        text: getString('title_settings'),
-                        style: Theme.of(context).textTheme.body1.copyWith(
-                          fontSize: fontSize*2,
+                new ListView(
+                  children: <Widget>[
+                    new Container(height: 28.0),
+                    new Container(
+                      height: fontSize*2,
+                      child: new Align(
+                        alignment: Alignment.centerRight,
+                        child: new FlatButton(
+                          onPressed: () {
+                            fetchConfig();
+                            String url = getString('bible_download');
+                            Navigator.of(context).push(
+                                new FadeAnimationRoute(builder: (context) => VersionsPage(url))
+                            );
+                          },
+                          child: new Text(
+                              getString('settings_manage_versions')
+                          ),
                         ),
-                        recognizer: new DoubleTapGestureRecognizer()
-                        ..onDoubleTap = () {
-                          RemoteConfig _config = widget.remoteConfig;
-                          Navigator.of(context).push(
-                              new FadeAnimationRoute(builder: (context) => DeveloperSettingsPage(_config))
-                          ).then((onValue) {
-                            App.of(context).refresh();
-                          });
-                        }
+                      ),
+                      color: Theme.of(context).canvasColor,
+                    ),
+                    new Container(
+                      height: orientation == Orientation.portrait ? fontSize*6 : fontSize*3,
+                      margin: EdgeInsets.only(top: orientation == Orientation.portrait ? fontSize*2 : fontSize),
+                      child: new Center(
+                        child: new RichText(
+                          text: new TextSpan(
+                              text: getString('title_settings'),
+                              style: Theme.of(context).textTheme.body1.copyWith(
+                                fontSize: fontSize*2,
+                              ),
+                              recognizer: new DoubleTapGestureRecognizer()
+                                ..onDoubleTap = () {
+                                  Navigator.of(context).push(
+                                      new FadeAnimationRoute(builder: (context) => DeveloperSettingsPage())
+                                  ).then((onValue) {
+                                    App.of(context).refresh();
+                                  });
+                                }
+                          ),
+                        ),
+                      ),
+                      color: Theme.of(context).canvasColor,
+                    ),
+                    new ListTile(
+                      title: new Text(getString('settings_section_lookAndFeel')),
+                    ),
+                    new Container(
+                      margin: EdgeInsets.all(8.0),
+                      child: new ExpansionPanelList(
+                          animationDuration: Duration(milliseconds: duration),
+                          expansionCallback: (int index, bool isExpanded) {
+                            setState(() {
+                              _lookAndFeelSettings[index].isExpanded = !isExpanded;
+                            });
+                          },
+                          children: _lookAndFeelSettings.map((SettingsItem<dynamic> item) {
+                            return new ExpansionPanel(
+                              isExpanded: item.isExpanded,
+                              headerBuilder: item.headerBuilder(onTap: () => setState(() => item.isExpanded = !item.isExpanded)),
+                              body: item.build(),
+                            );
+                          }).toList()
+                      ),
+                      color: Theme.of(context).canvasColor,
+                    ),
+                    new ListTile(
+                      title: new Text(getString('settings_section_reading')),
+                    ),
+                    new Container(
+                      margin: EdgeInsets.all(8.0),
+                      child: new ExpansionPanelList(
+                          animationDuration: Duration(milliseconds: duration),
+                          expansionCallback: (int index, bool isExpanded) {
+                            setState(() {
+                              _fontSettings[index].isExpanded = !isExpanded;
+                            });
+                          },
+                          children: _fontSettings.map((SettingsItem<dynamic> item) {
+                            return new ExpansionPanel(
+                              isExpanded: item.isExpanded,
+                              headerBuilder: item.headerBuilder(onTap: () => setState(() => item.isExpanded = !item.isExpanded)),
+                              body: item.build(),
+                            );
+                          }).toList()
                       ),
                     ),
+                    new Container(height: 56.0),
+                  ],
+                ),
+                appBarAtTop ? new Align(
+                  alignment: Alignment.topCenter,
+                  child: new Stack(
+                    children: <Widget>[
+                      new IgnorePointer(
+                        child: new Align(
+                          alignment: Alignment.topCenter,
+                          child: new Container(
+                            decoration: new BoxDecoration(
+                              gradient: new LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Theme.of(context).canvasColor, Theme.of(context).canvasColor.withAlpha(0)],
+                                tileMode: TileMode.repeated,
+                              ),
+                            ),
+                            height: 56.0,
+                          ),
+                        ),
+                      ),
+                      new Align(
+                        alignment: Alignment.topLeft,
+                        child: new Container(
+                          height: 56.0,
+                          width: 56.0,
+                          child: new IconButton(
+                            icon: new Icon(Icons.arrow_back),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  color: Theme.of(context).canvasColor,
-                ),
-                new ListTile(
-                  title: new Text(getString('settings_section_lookAndFeel')),
-                ),
-                new Container(
-                  margin: EdgeInsets.all(8.0),
-                  child: new ExpansionPanelList(
-                    animationDuration: Duration(milliseconds: duration),
-                    expansionCallback: (int index, bool isExpanded) {
-                      setState(() {
-                        _lookAndFeelSettings[index].isExpanded = !isExpanded;
-                      });
-                    },
-                    children: _lookAndFeelSettings.map((SettingsItem<dynamic> item) {
-                      return new ExpansionPanel(
-                        isExpanded: item.isExpanded,
-                        headerBuilder: item.headerBuilder(onTap: () => setState(() => item.isExpanded = !item.isExpanded)),
-                        body: item.build(),
-                      );
-                    }).toList()
-                  ),
-                  color: Theme.of(context).canvasColor,
-                ),
-                new ListTile(
-                  title: new Text(getString('settings_section_reading')),
-                ),
-                new Container(
-                  margin: EdgeInsets.all(8.0),
-                  child: new ExpansionPanelList(
-                      animationDuration: Duration(milliseconds: duration),
-                      expansionCallback: (int index, bool isExpanded) {
-                        setState(() {
-                          _fontSettings[index].isExpanded = !isExpanded;
-                        });
-                      },
-                      children: _fontSettings.map((SettingsItem<dynamic> item) {
-                        return new ExpansionPanel(
-                          isExpanded: item.isExpanded,
-                          headerBuilder: item.headerBuilder(onTap: () => setState(() => item.isExpanded = !item.isExpanded)),
-                          body: item.build(),
-                        );
-                      }).toList()
+                ) : new Align(
+                  alignment: Alignment.bottomCenter,
+                  child: new Stack(
+                    children: <Widget>[
+                      new IgnorePointer(
+                        child: new Align(
+                          alignment: Alignment.bottomCenter,
+                          child: new Container(
+                            decoration: new BoxDecoration(
+                              gradient: new LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
+                                tileMode: TileMode.repeated,
+                              ),
+                            ),
+                            height: 56.0,
+                          ),
+                        ),
+                      ),
+                      new Align(
+                        alignment: Alignment.bottomLeft,
+                        child: new Container(
+                          height: 56.0,
+                          width: 56.0,
+                          child: new IconButton(
+                            icon: new Icon(Icons.arrow_back),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                new Container(height: 56.0),
               ],
-            ),
-            appBarAtTop ? new Align(
-              alignment: Alignment.topCenter,
-              child: new Stack(
-                children: <Widget>[
-                  new IgnorePointer(
-                    child: new Align(
-                      alignment: Alignment.topCenter,
-                      child: new Container(
-                        decoration: new BoxDecoration(
-                          gradient: new LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Theme.of(context).canvasColor, Theme.of(context).canvasColor.withAlpha(0)],
-                            tileMode: TileMode.repeated,
-                          ),
-                        ),
-                        height: 56.0,
-                      ),
-                    ),
-                  ),
-                  new Align(
-                    alignment: Alignment.topLeft,
-                    child: new Container(
-                      height: 56.0,
-                      width: 56.0,
-                      child: new IconButton(
-                        icon: new Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ) : new Align(
-              alignment: Alignment.bottomCenter,
-              child: new Stack(
-                children: <Widget>[
-                  new IgnorePointer(
-                    child: new Align(
-                      alignment: Alignment.bottomCenter,
-                      child: new Container(
-                        decoration: new BoxDecoration(
-                          gradient: new LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
-                            tileMode: TileMode.repeated,
-                          ),
-                        ),
-                        height: 56.0,
-                      ),
-                    ),
-                  ),
-                  new Align(
-                    alignment: Alignment.bottomLeft,
-                    child: new Container(
-                      height: 56.0,
-                      width: 56.0,
-                      child: new IconButton(
-                        icon: new Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        )
+            )
+        ),
       ),
     );
   }
@@ -818,9 +810,6 @@ class FadeAnimationRoute<T> extends MaterialPageRoute<T> {
 
 class DeveloperSettingsPage extends StatefulWidget {
 
-  final RemoteConfig remoteConfig;
-  DeveloperSettingsPage(this.remoteConfig);
-
   @override
   _DeveloperSettingsPageState createState() => new _DeveloperSettingsPageState();
 }
@@ -858,13 +847,10 @@ class _DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   savePageActiveState(String key, bool value) async {
     String _capitalize(String s) => s[0].toUpperCase() + s.substring(1);

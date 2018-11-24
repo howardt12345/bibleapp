@@ -15,9 +15,6 @@ import 'package:bible/ui/versions.dart';
 class SearchWindow extends StatefulWidget {
   static _SearchWindowState of(BuildContext context) => context.ancestorStateOfType(TypeMatcher<_SearchWindowState>());
 
-  final RemoteConfig remoteConfig;
-  SearchWindow(this.remoteConfig);
-
   @override
   _SearchWindowState createState() => new _SearchWindowState();
 }
@@ -28,14 +25,10 @@ class _SearchWindowState extends State<SearchWindow> {
   ScrollController scrollController = new ScrollController();
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   Widget searchView() => new CustomScrollView(
     controller: scrollController,

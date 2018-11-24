@@ -36,10 +36,8 @@ const List months = [
 class PlanDaysPage extends StatefulWidget {
   final int index;
   final Plan plan;
-  final RemoteConfig remoteConfig;
 
   PlanDaysPage(
-    this.remoteConfig,
     {
       this.index = 0,
       this.plan,
@@ -66,14 +64,10 @@ class _PlanDaysPageState extends State<PlanDaysPage> {
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {
@@ -294,10 +288,8 @@ class DayEditPage extends StatefulWidget {
 
   final Day day;
   final bool add;
-  final RemoteConfig remoteConfig;
 
   DayEditPage(
-    this.remoteConfig,
     {
       this.day,
       this.add = false,
@@ -318,14 +310,10 @@ class DayEditPage extends StatefulWidget {
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {
@@ -354,7 +342,7 @@ class DayEditPage extends StatefulWidget {
                 child: !addButtonFAB ? new IconButton(
                   icon: new Icon(Icons.add),
                   onPressed: () => Navigator.of(context).push(
-                      new FadeAnimationRoute(builder: (context) => PassageEditPage(widget.remoteConfig, add: true))
+                      new FadeAnimationRoute(builder: (context) => PassageEditPage(add: true))
                   ).then((onValue) => setState(() {
                     if(onValue != null)
                       tmpDay.passages.add(onValue);
@@ -426,7 +414,6 @@ class DayEditPage extends StatefulWidget {
                           child: new ListTile(
                             onTap: () => Navigator.of(context).push(
                                 new FadeAnimationRoute(builder: (context) => PassageEditPage(
-                                  widget.remoteConfig,
                                   passage: passage,
                                 ))
                             ).then((onValue) => setState(() {})),
@@ -539,7 +526,7 @@ class DayEditPage extends StatefulWidget {
           icon: Icon(Icons.add),
           label: Text(getString('plan_add_passage')),
           onPressed: () => Navigator.of(context).push(
-              new FadeAnimationRoute(builder: (context) => PassageEditPage(widget.remoteConfig, add: true))
+              new FadeAnimationRoute(builder: (context) => PassageEditPage(add: true))
           ).then((onValue) => setState(() {
             if(onValue != null)
               tmpDay.passages.add(onValue);

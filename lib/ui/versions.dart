@@ -25,8 +25,7 @@ class VersionsPage extends StatefulWidget {
   static _VersionsPageState of(BuildContext context) => context.ancestorStateOfType(TypeMatcher<_VersionsPageState>());
 
   final String url;
-  final RemoteConfig remoteConfig;
-  VersionsPage(this.url, this.remoteConfig);
+  VersionsPage(this.url);
 
   @override
   _VersionsPageState createState() => new _VersionsPageState();
@@ -53,14 +52,10 @@ class _VersionsPageState extends State<VersionsPage> {
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {

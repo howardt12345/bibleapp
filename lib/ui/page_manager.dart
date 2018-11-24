@@ -17,23 +17,22 @@ bool developerSettings = false;
 const int duration = 300;
 
 String changelog =
-      '- The Plan feature is, for the most part, functional. '
-      '\n- Account authentication is now added. You can now sign in and save your plans to your account.'
-      '\n\nKnown Bugs: '
-      '\n- Many. Contact the developer if any bugs are found.'
-      '\n\nIn Progress:'
-      '\n- Bugfixes.'
-      '';
+    '- Improved swiping between chapters.'
+    '\n- Fixed several bugs regarding bible navigation.'
+    '\n- Fixed several bugs regarding the Plan page.'
+    '\n\nKnown Bugs: '
+    '\n- Contact the developer if any bugs are found.'
+    '\n\nIn Progress:'
+    '\n- Bugfixes.'
+    '';
 
 class PageManager extends StatefulWidget {
   static _PageManagerState of(BuildContext context) => context.ancestorStateOfType(TypeMatcher<_PageManagerState>());
 
   final List<Page> pages;
-  final RemoteConfig remoteConfig;
 
   PageManager({
     @required this.pages,
-    this.remoteConfig,
   });
 
   @override
@@ -50,7 +49,7 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
     super.initState();
     fetchConfig().then((void v) {
       versionsManager = new VersionsManager();
-      versionsManager.initialize(widget.remoteConfig.getString('bible_download'));
+      versionsManager.initialize(remoteConfig.getString('bible_download'));
     });
     _controller = new AnimationController(
       duration: const Duration(milliseconds: duration),
@@ -117,15 +116,10 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
 
-  String getString(String key) => widget.remoteConfig.getString(key);
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {

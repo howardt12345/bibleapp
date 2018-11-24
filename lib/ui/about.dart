@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:bible/ui/app.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -9,10 +10,6 @@ import 'package:bible/ui/settings.dart';
 
 class AboutPage extends StatefulWidget {
   static _AboutPageState of(BuildContext context) => context.ancestorStateOfType(TypeMatcher<_AboutPageState>());
-
-  final RemoteConfig remoteConfig;
-
-  AboutPage(this.remoteConfig);
 
   @override
   _AboutPageState createState() => new _AboutPageState();
@@ -50,14 +47,10 @@ class _AboutPageState extends State<AboutPage> with TickerProviderStateMixin {
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +83,7 @@ class _AboutPageState extends State<AboutPage> with TickerProviderStateMixin {
         child: new Center(
           child: new RichText(
             text: new TextSpan(
-              text: widget.remoteConfig.getString('title_about'),
+              text: remoteConfig.getString('title_about'),
               style: Theme.of(context).textTheme.body1.copyWith(
                 fontSize: fontSize*2,
               ),

@@ -1,15 +1,12 @@
 
 
-import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:bible/ui/app.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bible/ui/page_manager.dart';
 import 'package:bible/ui/settings.dart';
 
 class BookmarksPage extends StatefulWidget {
-  final RemoteConfig remoteConfig;
-
-  BookmarksPage(this.remoteConfig);
 
   @override
   _BookmarksPageState createState() => new _BookmarksPageState();
@@ -17,14 +14,10 @@ class BookmarksPage extends StatefulWidget {
 class _BookmarksPageState extends State<BookmarksPage> {
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {

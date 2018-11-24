@@ -17,9 +17,6 @@ import 'auth.dart' as auth;
 
 class ProfilePage extends StatefulWidget {
 
-  final RemoteConfig remoteConfig;
-  ProfilePage(this.remoteConfig);
-
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }

@@ -24,11 +24,8 @@ class PassageEditPage extends StatefulWidget {
 
   final PlanPassage passage;
   final bool add;
-  final RemoteConfig remoteConfig;
-
 
   PassageEditPage(
-    this.remoteConfig,
     {
       this.passage,
       this.add = false,
@@ -135,14 +132,10 @@ class _PassageEditPageState extends State<PassageEditPage> {
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {

@@ -16,9 +16,6 @@ import 'auth.dart' as auth;
 
 class LoginPage extends StatefulWidget {
 
-  final RemoteConfig remoteConfig;
-  LoginPage(this.remoteConfig);
-
   @override
   _LoginPageState createState() => new _LoginPageState();
 }
@@ -40,6 +37,12 @@ class _LoginPageState extends State<LoginPage> {
   bool signUp = false;
   String errorMessage = '';
 
+  Future<void> fetchConfig() async {
+    await remoteConfig.fetchConfig();
+  }
+
+  String getString(String key) => remoteConfig.getString(key);
+
   googleButton() => new Container(
       height: 40.0,
       decoration: new BoxDecoration(
@@ -58,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
             if(onValue == true) {
               Navigator.of(context).pop();
               Navigator.of(context).push(
-                  new FadeAnimationRoute(builder: (context) => ProfilePage(widget.remoteConfig))
+                  new FadeAnimationRoute(builder: (context) => ProfilePage())
               );
             }
           });
@@ -100,7 +103,7 @@ class _LoginPageState extends State<LoginPage> {
             if(onValue == true) {
               Navigator.of(context).pop();
               Navigator.of(context).push(
-                  new FadeAnimationRoute(builder: (context) => ProfilePage(widget.remoteConfig))
+                  new FadeAnimationRoute(builder: (context) => ProfilePage())
               );
             }
           });
@@ -409,7 +412,7 @@ class _LoginPageState extends State<LoginPage> {
       if(onValue == true) {
         Navigator.of(context).pop();
         Navigator.of(context).push(
-            new FadeAnimationRoute(builder: (context) => ProfilePage(widget.remoteConfig))
+            new FadeAnimationRoute(builder: (context) => ProfilePage())
         );
       }
     });

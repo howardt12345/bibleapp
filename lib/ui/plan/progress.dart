@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:bible/ui/app.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_database/firebase_database.dart';
@@ -15,10 +16,9 @@ import 'package:bible/ui/plan_manager_page.dart';
 import 'package:bible/ui/settings.dart';
 
 class ProgressPage extends StatefulWidget {
-  final RemoteConfig remoteConfig;
   final Plan plan;
 
-  ProgressPage(this.remoteConfig, this.plan);
+  ProgressPage(this.plan);
 
   @override
   _ProgressPageState createState() => new _ProgressPageState();
@@ -27,14 +27,10 @@ class _ProgressPageState extends State<ProgressPage> {
 
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {

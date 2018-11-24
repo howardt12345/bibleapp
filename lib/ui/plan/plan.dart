@@ -20,9 +20,7 @@ import 'package:bible/ui/versions.dart';
 class PlanInfoPage extends StatefulWidget {
 
   final Plan plan;
-  final RemoteConfig remoteConfig;
   PlanInfoPage(
-    this.remoteConfig,
     {
       this.plan
     }
@@ -34,14 +32,10 @@ class PlanInfoPage extends StatefulWidget {
 class _PlanInfoPageState extends State<PlanInfoPage> {
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +63,7 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                   icon: new Icon(Icons.menu),
                   onPressed: () {
                     Navigator.of(context).push(
-                        new FadeAnimationRoute(builder: (context) => ProgressPage(widget.remoteConfig, widget.plan))
+                        new FadeAnimationRoute(builder: (context) => ProgressPage(widget.plan))
                     ).then((onValue) {
                       setState(() {
                       });
@@ -124,7 +118,6 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                                   Navigator.of(context).push(
                                       new FadeAnimationRoute(
                                           builder: (context) => PlanDaysPage(
-                                            widget.remoteConfig,
                                             plan: widget.plan,
                                             index: DateTime.now().difference(widget.plan.startingDate).inDays
                                           )
@@ -136,7 +129,7 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                               onPressed: () {
                                 widget.plan.startPlan();
                                 Navigator.of(context).push(
-                                    new FadeAnimationRoute(builder: (context) => PlanDaysPage(widget.remoteConfig, plan: widget.plan, index: 0))
+                                    new FadeAnimationRoute(builder: (context) => PlanDaysPage(plan: widget.plan, index: 0))
                                 ).then((onValue) => setState(() {}));
                               },
                       ) : new Container(),
@@ -147,7 +140,7 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                             widget.plan.canEdit ? new IconButton(
                               icon: new Icon(Icons.edit),
                               onPressed: () => Navigator.of(context).push(
-                                  new FadeAnimationRoute(builder: (context) => PlanEditPage(widget.remoteConfig, plan: widget.plan))
+                                  new FadeAnimationRoute(builder: (context) => PlanEditPage(plan: widget.plan))
                               ).then((onValue) => setState(() {})),
                             ) : new Container(),
                             new IconButton(
@@ -184,7 +177,7 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                             ),
                             user != null ? new IconButton(
                               icon: new Icon(Icons.share),
-                              onPressed: () => planManager.sharePlan(widget.plan, context, widget.remoteConfig),
+                              onPressed: () => planManager.sharePlan(widget.plan, context),
                             ) : new Container(),
                           ],
                         ),
@@ -231,7 +224,6 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                           contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                           onTap: () => Navigator.of(context).push(
                               new FadeAnimationRoute(builder: (context) => PlanDaysPage(
-                                widget.remoteConfig,
                                 plan: widget.plan,
                                 index: widget.plan.days.indexOf(day),
                               ))
@@ -333,9 +325,7 @@ class PlanEditPage extends StatefulWidget {
 
   final Plan plan;
   final bool add;
-  final RemoteConfig remoteConfig;
   PlanEditPage(
-    this.remoteConfig,
     {
       this.plan,
       this.add = false,
@@ -363,14 +353,10 @@ class _PlanEditPageState extends State<PlanEditPage> {
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   @override
   void dispose() {
@@ -424,7 +410,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
                 child: !addButtonFAB ? new IconButton(
                   icon: new Icon(Icons.add),
                   onPressed: () => Navigator.of(context).push(
-                      new FadeAnimationRoute(builder: (context) => DayEditPage(widget.remoteConfig, add: true))
+                      new FadeAnimationRoute(builder: (context) => DayEditPage(add: true))
                   ).then((onValue) => setState(() {
                     if(onValue != null)
                       tmpPlan.days.add(onValue);
@@ -592,7 +578,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
                         (day) => new ListTile(
                           contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                           onTap: () => Navigator.of(context).push(
-                              new FadeAnimationRoute(builder: (context) => DayEditPage(widget.remoteConfig, day: day))
+                              new FadeAnimationRoute(builder: (context) => DayEditPage(day: day))
                           ).then((onValue) => setState(() {})),
                           trailing: IconButton(
                             icon: Icon(Icons.clear),
@@ -713,7 +699,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
           icon: Icon(Icons.add),
           label: Text(getString('plan_add_day')),
           onPressed: () => Navigator.of(context).push(
-              new FadeAnimationRoute(builder: (context) => DayEditPage(widget.remoteConfig, add: true))
+              new FadeAnimationRoute(builder: (context) => DayEditPage(add: true))
           ).then((onValue) => setState(() {
             if(onValue != null)
               tmpPlan.days.add(onValue);

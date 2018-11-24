@@ -4,6 +4,7 @@ import 'dart:core';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:bible/ui/FirebaseManager.dart';
 import 'package:bible/ui/about.dart';
 import 'package:bible/ui/bookmarks.dart';
 import 'package:bible/ui/home.dart';
@@ -30,6 +31,8 @@ import 'package:bible/ui/versions.dart';
 Bible bible = new Bible();
 FirebaseAnalytics analytics = new FirebaseAnalytics();
 FirebaseAnalyticsObserver observer = new FirebaseAnalyticsObserver(analytics: analytics);
+
+RemoteConfigManager remoteConfig;
 
 User user;
 
@@ -158,6 +161,9 @@ class _AppState extends State<App> {
         home: new FutureBuilder<RemoteConfig>(
           future: setupRemoteConfig(),
           builder: (BuildContext context, AsyncSnapshot<RemoteConfig> snapshot) {
+            if(snapshot.hasData) {
+              remoteConfig = new RemoteConfigManager(snapshot.data);
+            }
             return snapshot.hasData
                 ? _loadingInProgress
                 ? new Scaffold(
@@ -165,7 +171,6 @@ class _AppState extends State<App> {
                 child: new CircularProgressIndicator(),
               ),
             ) : PageManager(
-              remoteConfig: snapshot.data,
               pages: pages,
             ) : new Container();
           },
@@ -300,27 +305,27 @@ Future<RemoteConfig> setupRemoteConfig() async {
 
   pages = [
     Page(
-      page: MainPage(remoteConfig),
+      page: MainPage(),
       key: "menu_main",
       isActive: true,
     ),
     Page(
-      page: new BookmarksPage(remoteConfig),
+      page: new BookmarksPage(),
       key: "menu_bookmarks",
       isActive: false,
     ),
     Page(
-      page: new PlanManagerPage(remoteConfig),
+      page: new PlanManagerPage(),
       key: "menu_plan",
       isActive: true,
     ),
     Page(
-      page: SettingsPage(remoteConfig),
+      page: SettingsPage(),
       key: "menu_settings",
       isActive: true,
     ),
     Page(
-      page: new AboutPage(remoteConfig),
+      page: new AboutPage(),
       key: "menu_about",
       isActive: false,
     ),

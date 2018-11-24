@@ -33,9 +33,6 @@ final itemCount = bible.chaptersLength();
 
 
 class MainPage extends StatefulWidget {
-  final RemoteConfig remoteConfig;
-
-  MainPage(this.remoteConfig);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -44,7 +41,9 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
   FixedExtentScrollController bookController,
       chapterController;
-  ListWheelScrollView chapterScrollView;
+
+  ListWheelScrollView bookScrollView,
+      chapterScrollView;
 
   PageController pageController = new PageController(initialPage: 1);
   SwiperController swipeController = new SwiperController();
@@ -65,14 +64,10 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   }
 
   Future<void> fetchConfig() async {
-    try {
-      await widget.remoteConfig.fetch(expiration: const Duration(seconds: 0));
-      await widget.remoteConfig.activateFetched();
-    } catch (e) {
-
-    }
+    await remoteConfig.fetchConfig();
   }
-  String getString(String key) => widget.remoteConfig.getString(key);
+
+  String getString(String key) => remoteConfig.getString(key);
 
   _getIndex() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -92,6 +87,22 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       );
       chapterController = new FixedExtentScrollController(
           initialItem: chapter
+      );
+
+      bookScrollView = ListWheelScrollView(
+        children: List.generate(bible.length(), (i) => new ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
+          title: new Text(
+            bible.books.keys.toList()[i].item2,
+            textAlign: TextAlign.center,
+            softWrap: true,
+          ),
+        )),
+        controller: bookController,
+        itemExtent: 56.0,
+        perspective: double.minPositive,
+        onSelectedItemChanged: (int index) => changeBook(index),
+        physics: FixedExtentScrollPhysics(),
       );
 
       chapterScrollView = new ListWheelScrollView(
@@ -154,6 +165,21 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           initialItem: chapter
       );
 
+      bookScrollView = ListWheelScrollView(
+        children: List.generate(bible.length(), (i) => new ListTile(
+          contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
+          title: new Text(
+            bible.books.keys.toList()[i].item2,
+            textAlign: TextAlign.center,
+            softWrap: true,
+          ),
+        )),
+        controller: bookController,
+        itemExtent: 56.0,
+        perspective: double.minPositive,
+        onSelectedItemChanged: (int index) => changeBook(index),
+        physics: FixedExtentScrollPhysics(),
+      );
       versionChanged = false;
       changeBook(book);
     }
@@ -167,12 +193,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           child: new Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.menu),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
               new Expanded(
                 child: new GestureDetector(
@@ -201,57 +227,11 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   child: new Row(
                     children: <Widget>[
                       new Expanded(
-                        child: ListWheelScrollView.useDelegate(
-                          childDelegate: ListWheelChildBuilderDelegate(
-                              childCount: bible.length(),
-                              builder: (BuildContext context, int index) => new ListTile(
-                                contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                                title: new Text(
-                                  bible.books.keys.toList()[index].item2,
-                                  textAlign: TextAlign.center,
-                                  softWrap: true,
-                                ),
-                              )
-                          ),
-                          controller: bookController,
-                          itemExtent: 56.0,
-                          perspective: double.minPositive,
-                          onSelectedItemChanged: (int index) => changeBook(index),
-                          physics: FixedExtentScrollPhysics(),
-                        ),
+                        child: bookScrollView ?? new Container(),
                         flex: 11,
                       ),
                       new Expanded(
-                        child: /*new ListWheelScrollView(
-                          children: List.generate(bible.books[bible.books.keys.toList()[tmpBook]].length(), (i) => new ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: new Text(
-                              "${(i+1)}",
-                              textAlign: TextAlign.center,
-                            ),
-                          )),
-                          controller: chapterController,
-                          itemExtent: 56.0,
-                          perspective: double.minPositive,
-                          onSelectedItemChanged: (int index) => changeChapter(index),
-                          physics: FixedExtentScrollPhysics(),
-                        )*/ListWheelScrollView.useDelegate(
-                          childDelegate: ListWheelChildBuilderDelegate(
-                            childCount: bible.books[bible.books.keys.toList()[tmpBook]].length(),
-                            builder: (BuildContext context, int i) => new ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              title: new Text(
-                                "${(i+1)}",
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ),
-                          controller: chapterController,
-                          itemExtent: 56.0,
-                          perspective: double.minPositive,
-                          onSelectedItemChanged: (int index) => changeChapter(index),
-                          physics: FixedExtentScrollPhysics(),
-                        ) ?? new Container(),
+                        child: chapterScrollView ?? new Container(),
                         flex: 4,
                       ),
                     ],
@@ -265,9 +245,8 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                     onPressed: () {
                       fetchConfig();
                       String url = getString('bible_download');
-                      RemoteConfig _config = widget.remoteConfig;
                       Navigator.of(context).push(
-                          new FadeAnimationRoute(builder: (context) => VersionsPage(url, _config))
+                          new FadeAnimationRoute(builder: (context) => VersionsPage(url))
                       );
                     },
                     child: new Text(
@@ -292,155 +271,158 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
       preferredSize: new Size.fromHeight(56.0),
     );
 
-    return defaultVersion.isNotEmpty
-        ? Scaffold(
-      body: new SafeArea(
-          child: new Stack(
-            children: <Widget>[
-              new GestureDetector(
-                onDoubleTap: () {
-                  RemoteConfig _config = widget.remoteConfig;
-                  Navigator.of(context).push<Tuple2>(
-                      new FadeAnimationRoute(builder: (context) => SearchWindow(_config))
-                  ).then<void>((Tuple2<dynamic, dynamic> value) {
-                    if(value != null) {
-                      setState(() {
-                        tmpBook = value.item1 ?? book;
-                        tmpChapter = value.item2 ?? book;
-                      });
-                      setText();
-                    }
-                  });
-                },
-                child: Swiper(
-                    controller: swipeController,
-                    index: bible.index(book, chapter),
-                    itemCount: bible.chaptersLength(),
-                    itemBuilder: (BuildContext context, int index) => FutureBuilder(
-                      future: bible.getPageIndex(context, index),
-                      initialData: new Center(
-                        child: new CircularProgressIndicator(),
-                      ),
-                      builder: (BuildContext context, AsyncSnapshot<Widget> data) {
-                        return new Scrollbar(
-                          child: new SingleChildScrollView(
-                            child: data.data,
-                          ),
-                        );
-                      },
-                    ),
-                    onIndexChanged: (index) {
-                      setState(() {
-                        Tuple2<int, int> tmp = bible.fromIndex(index);
-                        tmpBook = tmp.item1;
-                        tmpChapter = tmp.item2;
-                      });
-                      setText();
-                    }
-                ),
-              ),
-            ],
-          )
-      ),
-      appBar: appBarAtTop ? listAppBar : null,
-      bottomNavigationBar: appBarAtTop ? null : listAppBar,
-    ) : new Scaffold(
-      body: new SafeArea(
-        child: new Stack(
-          children: <Widget>[
-            new Center(
-              child: new Column(
-                mainAxisSize: MainAxisSize.min,
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        return defaultVersion.isNotEmpty
+            ? Scaffold(
+          body: new SafeArea(
+              child: new Stack(
                 children: <Widget>[
-                  new Container(
-                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-                    child: new Center(
-                      child: new RichText(
-                        textAlign: TextAlign.center,
-                        text: new TextSpan(
-                          text: getString('no_default_version_title'),
-                          style: Theme.of(context).textTheme.body1.copyWith(
-                            fontSize: fontSize*1.6,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  new Container(
-                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-                    child: new Center(
-                      child: new RichText(
-                        textAlign: TextAlign.center,
-                        text: new TextSpan(
-                          text: '${getString('no_default_version_subtitle')}',
-                          style: Theme.of(context).textTheme.body1.copyWith(
-                            fontSize: fontSize,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  new FlatButton(
-                    onPressed: () {
-                      fetchConfig();
-                      String url = getString('bible_download');
-                      RemoteConfig _config = widget.remoteConfig;
-                      Navigator.of(context).push(
-                          new FadeAnimationRoute(builder: (context) => VersionsPage(url, _config))
-                      );
+                  new GestureDetector(
+                    onDoubleTap: () {
+                      Navigator.of(context).push<Tuple2>(
+                          new FadeAnimationRoute(builder: (context) => SearchWindow())
+                      ).then<void>((Tuple2<dynamic, dynamic> value) {
+                        if(value != null) {
+                          setState(() {
+                            tmpBook = value.item1 ?? book;
+                            tmpChapter = value.item2 ?? book;
+                          });
+                          setText();
+                        }
+                      });
                     },
-                    child: new Text(getString('select_default_version')),
+                    child: Swiper(
+                        controller: swipeController,
+                        index: bible.index(book, chapter),
+                        itemCount: bible.chaptersLength(),
+                        itemBuilder: (BuildContext context, int index) => FutureBuilder(
+                          future: bible.getPageIndex(context, index, orientation: orientation),
+                          initialData: new Center(
+                            child: new CircularProgressIndicator(),
+                          ),
+                          builder: (BuildContext context, AsyncSnapshot<Widget> data) {
+                            return new Scrollbar(
+                              child: new SingleChildScrollView(
+                                child: data.data,
+                              ),
+                            );
+                          },
+                        ),
+                        onIndexChanged: (index) {
+                          setState(() {
+                            Tuple2<int, int> tmp = bible.fromIndex(index);
+                            tmpBook = tmp.item1;
+                            tmpChapter = tmp.item2;
+                          });
+                          setText();
+                        }
+                    ),
                   ),
-                  new Container(height: 56.0),
                 ],
-              ),
-            ),
-            new Align(
-              alignment: Alignment.bottomCenter,
-              child: new Container(
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
-                    tileMode: TileMode.repeated,
-                  ),
-                ),
-                height: 56.0,
-                alignment: Alignment.bottomCenter,
-                child: new Row(
-                  children: [
-                    new Expanded(
-                        child: new Container(
-                          height: 56.0,
-                          width: 56.0,
-                          child: new IconButton(
-                            icon: new Icon(Icons.arrow_back),
-                            onPressed: () => Navigator.of(context).pop(),
+              )
+          ),
+          appBar: appBarAtTop ? listAppBar : null,
+          bottomNavigationBar: appBarAtTop ? null : listAppBar,
+        ) : new Scaffold(
+          body: new SafeArea(
+            child: new Stack(
+              children: <Widget>[
+                new Center(
+                  child: new Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      new Container(
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+                        child: new Center(
+                          child: new RichText(
+                            textAlign: TextAlign.center,
+                            text: new TextSpan(
+                              text: getString('no_default_version_title'),
+                              style: Theme.of(context).textTheme.body1.copyWith(
+                                fontSize: fontSize*1.6,
+                              ),
+                            ),
                           ),
                         ),
-                        flex: 2
-                    ),
-                    new Expanded(
-                      child: new Opacity(opacity: 0.0),
-                      flex: 11,
-                    )
-                  ],
+                      ),
+                      new Container(
+                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+                        child: new Center(
+                          child: new RichText(
+                            textAlign: TextAlign.center,
+                            text: new TextSpan(
+                              text: '${getString('no_default_version_subtitle')}',
+                              style: Theme.of(context).textTheme.body1.copyWith(
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.w300,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      new FlatButton(
+                        onPressed: () {
+                          fetchConfig();
+                          String url = getString('bible_download');
+                          Navigator.of(context).push(
+                              new FadeAnimationRoute(builder: (context) => VersionsPage(url))
+                          );
+                        },
+                        child: new Text(getString('select_default_version')),
+                      ),
+                      new Container(height: 56.0),
+                    ],
+                  ),
                 ),
-              ),
+                new Align(
+                  alignment: Alignment.bottomCenter,
+                  child: new Container(
+                    decoration: new BoxDecoration(
+                      gradient: new LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
+                        tileMode: TileMode.repeated,
+                      ),
+                    ),
+                    height: 56.0,
+                    alignment: Alignment.bottomCenter,
+                    child: new Row(
+                      children: [
+                        new Expanded(
+                            child: new Container(
+                              height: 56.0,
+                              width: 56.0,
+                              child: new IconButton(
+                                icon: new Icon(Icons.arrow_back),
+                                onPressed: () => Navigator.of(context).pop(),
+                              ),
+                            ),
+                            flex: 2
+                        ),
+                        new Expanded(
+                          child: new Opacity(opacity: 0.0),
+                          flex: 11,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      }
     );
   }
 
   changeBook(int b) {
     print('changeBook');
     setState(() {
-/*      chapterScrollView = new ListWheelScrollView(
-        children: List.generate(bible.books[bible.books.keys.toList()[b]].length(), (i) => new ListTile(
+      tmpBook = b;
+      chapterScrollView = new ListWheelScrollView(
+        children: List.generate(bible.books[bible.books.keys.toList()[tmpBook]].length(), (i) => new ListTile(
           contentPadding: EdgeInsets.zero,
           title: new Text(
             "${(i+1)}",
@@ -452,9 +434,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         perspective: double.minPositive,
         onSelectedItemChanged: (int index) => changeChapter(index),
         physics: FixedExtentScrollPhysics(),
-      );*/
-      tmpBook = b;
-      tmpChapter = tmpChapter >= bible.books[bible.books.keys.toList()[b]].length() ? bible.books[bible.books.keys.toList()[b]].length()-1 : tmpChapter;
+      );
+      var tmp = tmpChapter;
+      chapterController.jumpToItem(bible.books[bible.books.keys.toList()[tmpBook]].length()-1);
+      if(tmp < bible.books[bible.books.keys.toList()[tmpBook]].length()) {
+        chapterController.jumpToItem(tmp);
+      }
     });
   }
 
@@ -530,8 +515,10 @@ class _BibleNavigationState extends State<BibleNavigation> {
   FixedExtentScrollController bookController,
       chapterController/*,
       verseController*/;
-  ListWheelScrollView chapterScrollView/*,
-      verseScrollView*/;
+/*  ListWheelScrollView chapterScrollView*//*,
+      verseScrollView*//*;*/
+
+  List<Widget> chapters = [];
 
   int _book, _chapter, _tmpBook, _tmpChapter;
 
@@ -554,20 +541,14 @@ class _BibleNavigationState extends State<BibleNavigation> {
         initialItem: _chapter
     );
 
-    chapterScrollView = new ListWheelScrollView(
-      children: List.generate(bible.books[bible.books.keys.toList()[_book]].length(), (i) => new ListTile(
-        contentPadding: EdgeInsets.zero,
-        title: new Text(
-          "${(i+1)}",
-          textAlign: TextAlign.center,
-        ),
-      )),
-      controller: chapterController,
-      itemExtent: 56.0,
-      perspective: double.minPositive,
-      onSelectedItemChanged: (int index) => changeChapter(index),
-      physics: FixedExtentScrollPhysics(),
-    );
+    chapters = List.generate(bible.books[bible.books.keys.toList()[_book]].length(), (i) => new ListTile(
+      contentPadding: EdgeInsets.zero,
+      title: new Text(
+        "${(i+1)}",
+        textAlign: TextAlign.center,
+      ),
+    ));
+
 /*    verseScrollView = new ListWheelScrollView(
       children: List.generate(bible.books[bible.books.keys.toList()[book]].chapters[chapter].length(), (i) => new ListTile(
         contentPadding: EdgeInsets.zero,
@@ -597,7 +578,6 @@ class _BibleNavigationState extends State<BibleNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    print(bible.books[bible.books.keys.toList()[_tmpBook]].length());
     return new AlertDialog(
       title: !search ? Row(
         children: <Widget>[
@@ -664,13 +644,7 @@ class _BibleNavigationState extends State<BibleNavigation> {
               ),
               Expanded(
                 child: ListWheelScrollView(
-                  children: List.generate(bible.books[bible.books.keys.toList()[_tmpBook]].length(), (i) => new ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: new Text(
-                      "${(i+1)}",
-                      textAlign: TextAlign.center,
-                    ),
-                  )),
+                  children: chapters,
                   controller: chapterController,
                   itemExtent: 56.0,
                   perspective: double.minPositive,
@@ -750,8 +724,19 @@ class _BibleNavigationState extends State<BibleNavigation> {
   changeBook(int b) {
     setState(() {
       _tmpBook = b;
+      chapters = List.generate(bible.books[bible.books.keys.toList()[_tmpBook]].length(), (i) => new ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: new Text(
+          "${(i+1)}",
+          textAlign: TextAlign.center,
+        ),
+      ));
+      var tmp = _tmpChapter;
+      chapterController.jumpToItem(chapters.length-1);
+      if(tmp < chapters.length) {
+        chapterController.jumpToItem(tmp);
+      }
     });
-    setState(() {});
   }
   changeChapter(int c) {
     setState(() {

@@ -151,32 +151,27 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
                 alignment: Alignment.bottomCenter,
                 child: new Row(
                   children: [
-                    new Expanded(
-                        child: new Container(
-                          height: 56.0,
-                          width: 56.0,
-                          child: new IconButton(
-                            icon: new Icon(Icons.info_outline),
-                            onPressed: () => test(context),
-                          ),
-                        ),
-                        flex: 2
+                    new Container(
+                      height: 56.0,
+                      width: 56.0,
+                      child: new IconButton(
+                        icon: new Icon(Icons.info_outline),
+                        onPressed: () => test(context),
+                      ),
                     ),
                     new Expanded(
                       child: new Opacity(opacity: 0.0),
                       flex: 9,
                     ),
-                    new Expanded(
-                        child: new Container(
-                          height: 56.0,
-                          width: 56.0,
-                          child: /*new IconButton(
+                    new Container(
+                      height: 56.0,
+                      width: 56.0,
+                      child: /*new IconButton(
                               icon: new Icon(Icons.exit_to_app),
                               onPressed: () => exit(0),
                             )*/new Container(),
-                        ),
-                        flex: 2
-                    ),
+                    )
+
                   ],
                 ),
               ),
@@ -189,15 +184,13 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
 
   Widget _buildMenu(BuildContext context, Widget child) {
     return Center(
-      child: Container(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).size.height*0.25),
-        alignment: Alignment.center,
-        child: ListView(
-          physics: NeverScrollableScrollPhysics(),
-          children: widget.pages
-              .map((Page p) => _buildMenuItem(p, widget.pages.indexOf(p), context))
-              .toList(),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: widget.pages
+            .map((Page p) => _buildMenuItem(p, widget.pages.indexOf(p), context))
+            .toList(),
       ),
     );
   }

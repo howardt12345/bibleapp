@@ -17,7 +17,6 @@ import 'package:bible/ui/versions.dart';
 
 import 'package:bible/ui/expansion_panel/expansion_panel.dart';
 
-
 const String themePrefs = 'appTheme';
 const String animationSpeedPrefs = 'animationSpeed';
 const String appBarLocationPrefs = 'appBarLocation';
@@ -424,13 +423,25 @@ class _SettingsPageState extends State<SettingsPage> {
                         builder: (FormFieldState<double> field) {
                           return new Column(
                             children: <Widget>[
-                              new Slider(
-                                min: 8.0,
-                                max: 32.0,
-                                divisions: 12,
-                                label: '${field.value.round()}',
-                                value: field.value,
-                                onChanged: field.didChange,
+                              new Row(
+                                children: <Widget>[
+                                  new Flexible(
+                                    child: new Slider(
+                                      min: 8.0,
+                                      max: 32.0,
+                                      divisions: 12,
+                                      label: '${field.value.round()}',
+                                      value: field.value,
+                                      onChanged: field.didChange,
+                                    ),
+                                  ),
+                                  new Container(
+                                    child: new Text(
+                                      '${field.value}',
+                                        style: Theme.of(context).textTheme.caption
+                                    ),
+                                  ),
+                                ],
                               ),
                               new RichText(
                                 textAlign: TextAlign.left,
@@ -518,7 +529,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: new Text(getString('settings_section_lookAndFeel')),
                     ),
                     new Container(
-                      margin: EdgeInsets.all(8.0),
+                      margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       child: new ExpansionPanelList(
                           animationDuration: Duration(milliseconds: duration),
                           expansionCallback: (int index, bool isExpanded) {
@@ -540,7 +551,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       title: new Text(getString('settings_section_reading')),
                     ),
                     new Container(
-                      margin: EdgeInsets.all(8.0),
+                      margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       child: new ExpansionPanelList(
                           animationDuration: Duration(milliseconds: duration),
                           expansionCallback: (int index, bool isExpanded) {

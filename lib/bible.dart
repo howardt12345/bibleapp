@@ -302,10 +302,7 @@ class Bible {
             ),
           ),
           new Container(
-            margin: EdgeInsets.only(
-              left: 8.0,
-              right: 8.0,
-            ),
+            margin: EdgeInsets.symmetric(horizontal: 16.0),
             child: new Parser(
               context,
               annotations,
@@ -317,9 +314,7 @@ class Bible {
             ).fromHtml(data[0]['content']),
           ),
         ],
-      ): new Center(
-        child: new CircularProgressIndicator(),
-      );
+      ): new Container();
     } catch(e) {
       print('Error on getPageIndex: $e');
       return new Container();

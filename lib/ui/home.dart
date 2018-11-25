@@ -302,11 +302,18 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                             child: new CircularProgressIndicator(),
                           ),
                           builder: (BuildContext context, AsyncSnapshot<Widget> data) {
-                            return new Scrollbar(
-                              child: new SingleChildScrollView(
-                                child: data.data,
-                              ),
-                            );
+                            switch(data.connectionState) {
+                              case ConnectionState.waiting:
+                                return new Center(
+                                  child: new CircularProgressIndicator(),
+                                );
+                              default:
+                                return new Scrollbar(
+                                  child: new SingleChildScrollView(
+                                    child: data.data,
+                                  ),
+                                );
+                            }
                           },
                         ),
                         onIndexChanged: (index) {
@@ -522,7 +529,6 @@ class _BibleNavigationState extends State<BibleNavigation> {
 
   int _book, _chapter, _tmpBook, _tmpChapter;
 
-
   TextEditingController textEditingController = new TextEditingController();
 
   bool search = false;
@@ -671,7 +677,7 @@ class _BibleNavigationState extends State<BibleNavigation> {
                     tileMode: TileMode.repeated,
                   ),
                 ),
-                height: 112.0,
+                height: 56.0,
               ),
             ),
           ),
@@ -687,7 +693,7 @@ class _BibleNavigationState extends State<BibleNavigation> {
                     tileMode: TileMode.repeated,
                   ),
                 ),
-                height: 112.0,
+                height: 56.0,
               ),
             ),
           ),

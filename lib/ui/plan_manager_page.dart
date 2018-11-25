@@ -90,12 +90,13 @@ class PlanManagerPageState extends State<PlanManagerPage> {
           child: new Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Expanded(
+              new Container(
+                height: 56.0,
+                width: 56.0,
                 child: new IconButton(
-                  icon: new Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
+                    icon: new Icon(Icons.arrow_back),
+                    onPressed: () => Navigator.of(context).pop(),
                 ),
-                flex: 4,
               ),
               new Expanded(
                 child: new Container(),
@@ -119,7 +120,9 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                 ) : new Container(),
                 flex: 4,
               ),
-              new Expanded(
+              Container(
+                height: 56.0,
+                width: 56.0,
                 child: new IconButton(
                   icon: new Icon(Icons.menu),
                   onPressed: () async {
@@ -142,7 +145,6 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                     }
                   },
                 ),
-                flex: 4,
               ),
             ],
           ),

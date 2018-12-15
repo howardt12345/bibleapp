@@ -79,23 +79,22 @@ class _PlanDaysPageState extends State<PlanDaysPage> {
           child: new Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.arrow_back),
                   onPressed: () { Navigator.pop(context); },
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
               new Expanded(
                 child: new Container(),
-                flex: 20,
               ),
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.menu),
                   onPressed: () => print('menu'),
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
             ],
           ),
@@ -104,11 +103,8 @@ class _PlanDaysPageState extends State<PlanDaysPage> {
       preferredSize: new Size.fromHeight(56.0),
     );
 
-    return new WillPopScope(
-      onWillPop: () async {
-        Navigator.of(context).pop();
-      },
-      child: new Scaffold(
+    return new OrientationBuilder(
+      builder: (context, orientation) => new Scaffold(
         body: new SafeArea(
           child: new Stack(
             children: <Widget>[
@@ -219,67 +215,69 @@ class _DayPageState extends State<DayPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new ListView(
-      children: <Widget>[
-        new Container(
-          height: fontSize*6,
-          margin: EdgeInsets.only(
-            top: fontSize*4,
-            left: 8.0,
-            right: 8.0,
-          ),
-          child: new Center(
-            child: new RichText(
-              textAlign: TextAlign.center,
-              text: new TextSpan(
-                text: widget.startingDate != null
-                  ? '${months[widget.startingDate.add(Duration(days: widget.index)).month-1]} ${widget.startingDate.add(Duration(days: widget.index)).day}'
-                  : '',
-                style: Theme.of(context).textTheme.body1.copyWith(
-                  fontSize: fontSize,
-                  color: widget.startingDate != null && DateTime.now().difference(widget.startingDate).inDays == widget.index
-                      ? Theme.of(context).accentColor
-                      : Theme.of(context).textTheme.body1.color
-                ),
-                children: [
-                  new TextSpan(
-                    text: '\nDay ${widget.index+1}',
-                    style: Theme.of(context).textTheme.body1.copyWith(
-                      fontSize: fontSize*2,
-                    ),
+    return OrientationBuilder(
+      builder: (context, orientation) => new ListView(
+        children: <Widget>[
+          new Container(
+            height: orientation == Orientation.portrait ? fontSize*8 : fontSize*4,
+            margin: EdgeInsets.only(
+              top: orientation == Orientation.portrait ? fontSize*4 : fontSize*2,
+              left: 8.0,
+              right: 8.0,
+            ),
+            child: new Center(
+              child: new RichText(
+                textAlign: TextAlign.center,
+                text: new TextSpan(
+                  text: widget.startingDate != null
+                      ? '${months[widget.startingDate.add(Duration(days: widget.index)).month-1]} ${widget.startingDate.add(Duration(days: widget.index)).day}'
+                      : '',
+                  style: Theme.of(context).textTheme.body1.copyWith(
+                      fontSize: fontSize,
+                      color: widget.startingDate != null && DateTime.now().difference(widget.startingDate).inDays == widget.index
+                          ? Theme.of(context).accentColor
+                          : Theme.of(context).textTheme.body1.color
                   ),
-                ],
+                  children: [
+                    new TextSpan(
+                      text: '\nDay ${widget.index+1}',
+                      style: Theme.of(context).textTheme.body1.copyWith(
+                        fontSize: fontSize*2,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
+            color: Theme.of(context).canvasColor,
           ),
-          color: Theme.of(context).canvasColor,
-        ),
-        new Card(
-          child: new Column(
-            children: widget.day.passages.map(
-                  (passage) => new ListTile(
-                onTap: () => Navigator.of(context).push(
-                      new FadeAnimationRoute(builder: (context) => PlanViewerPage(
-                        day: widget.day,
-                        dayIndex: widget.index,
-                        index: widget.day.passages.indexOf(passage),
-                      ))
-                ).then((onValue) => setState(() {})),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                trailing: passage.completed ? Icon(Icons.check) : null,
-                title: new RichText(
-                  text: new TextSpan(
-                    text: '${passage.toText()}',
-                    style: Theme.of(context).textTheme.body1.copyWith(
-                      fontSize: fontSize,
+          new Card(
+            child: new Column(
+              children: widget.day.passages.map(
+                      (passage) => new ListTile(
+                    onTap: () => Navigator.of(context).push(
+                        new FadeAnimationRoute(builder: (context) => PlanViewerPage(
+                          day: widget.day,
+                          dayIndex: widget.index,
+                          index: widget.day.passages.indexOf(passage),
+                        ))
+                    ).then((onValue) => setState(() {})),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                    trailing: passage.completed ? Icon(Icons.check) : null,
+                    title: new RichText(
+                      text: new TextSpan(
+                        text: '${passage.toText()}',
+                        style: Theme.of(context).textTheme.body1.copyWith(
+                          fontSize: fontSize,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              )
-            ).toList(),
+                  )
+              ).toList(),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -325,18 +323,18 @@ class DayEditPage extends StatefulWidget {
           child: new Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.clear),
                   onPressed: () {
                     Navigator.pop(context, null);
                   },
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
               new Expanded(
                 child: new Container(),
-                flex: 16,
+                flex: 4,
               ),
               new Expanded(
                 child: !addButtonFAB ? new IconButton(
@@ -348,9 +346,9 @@ class DayEditPage extends StatefulWidget {
                       tmpDay.passages.add(onValue);
                   })),
                 ) : new Container(),
-                flex: 4,
+                flex: 1,
               ),
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.check),
                   onPressed: () {
@@ -363,7 +361,7 @@ class DayEditPage extends StatefulWidget {
                     Navigator.pop(context, tmpDay);
                   },
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
             ],
           ),
@@ -372,18 +370,17 @@ class DayEditPage extends StatefulWidget {
       preferredSize: new Size.fromHeight(56.0),
     );
 
-    return new WillPopScope(
-      onWillPop: () { Navigator.pop(context); },
-      child: new Scaffold(
+    return new OrientationBuilder(
+      builder: (context, orientation) => new Scaffold(
         body: new SafeArea(
           child: new Stack(
             children: <Widget>[
               new ListView(
                 children: <Widget>[
                   new Container(
-                    height: fontSize*8,
+                    height: orientation == Orientation.portrait ? fontSize*8 : fontSize*4,
                     margin: EdgeInsets.only(
-                      top: fontSize*4,
+                      top: orientation == Orientation.portrait ? fontSize*4 : fontSize*2,
                       left: 8.0,
                       right: 8.0,
                     ),
@@ -403,62 +400,62 @@ class DayEditPage extends StatefulWidget {
                   tmpDay.passages != null && tmpDay.passages.isNotEmpty ? new Card(
                     child: new Column(
                       children: tmpDay.passages.map(
-                        (passage) => new GestureDetector(
-                          onDoubleTap: () => Navigator.of(context).push(
-                              new FadeAnimationRoute(builder: (context) => PlanViewerPage(
-                                day: tmpDay,
-                                index: tmpDay.passages.indexOf(passage),
-                                edit: true,
-                              ))
-                          ).then((onValue) => setState(() {})),
-                          child: new ListTile(
-                            onTap: () => Navigator.of(context).push(
-                                new FadeAnimationRoute(builder: (context) => PassageEditPage(
-                                  passage: passage,
+                              (passage) => new GestureDetector(
+                            onDoubleTap: () => Navigator.of(context).push(
+                                new FadeAnimationRoute(builder: (context) => PlanViewerPage(
+                                  day: tmpDay,
+                                  index: tmpDay.passages.indexOf(passage),
+                                  edit: true,
                                 ))
                             ).then((onValue) => setState(() {})),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                            trailing: IconButton(
-                              icon: Icon(Icons.clear),
-                              onPressed: () => showDialog<DialogAction>(
-                                  context: context,
-                                  builder: (context) => new AlertDialog(
-                                    title: new Text('Delete This Passage?'),
-                                    content: new Text('Are you sure you want to delete this passage?'
-                                        '\nThis will delete ${passage.toText()} from this plan.'),
-                                    actions: <Widget>[
-                                      new FlatButton(
-                                        child: new Text('CANCEL'),
-                                        onPressed: () => Navigator.pop(context, DialogAction.cancel),
-                                      ),
-                                      new FlatButton(
-                                        child: new Text('OK'),
-                                        onPressed: () => Navigator.pop(context, DialogAction.confirm),
-                                      ),
-                                    ],
-                                  )
-                              ).then<void>((DialogAction value) {
-                                switch(value) {
-                                  case DialogAction.confirm:
-                                    print('Delete confirmed.');
-                                    setState(() => tmpDay.passages.remove(passage));
-                                    break;
-                                  case DialogAction.cancel:
-                                    print('Delete cancelled.');
-                                    break;
-                                }
-                              }),
-                            ),
-                            title: new RichText(
-                              text: new TextSpan(
-                                text: '${passage.toText()}',
-                                style: Theme.of(context).textTheme.body1.copyWith(
-                                  fontSize: fontSize,
+                            child: new ListTile(
+                              onTap: () => Navigator.of(context).push(
+                                  new FadeAnimationRoute(builder: (context) => PassageEditPage(
+                                    passage: passage,
+                                  ))
+                              ).then((onValue) => setState(() {})),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+                              trailing: IconButton(
+                                icon: Icon(Icons.clear),
+                                onPressed: () => showDialog<DialogAction>(
+                                    context: context,
+                                    builder: (context) => new AlertDialog(
+                                      title: new Text('Delete This Passage?'),
+                                      content: new Text('Are you sure you want to delete this passage?'
+                                          '\nThis will delete ${passage.toText()} from this plan.'),
+                                      actions: <Widget>[
+                                        new FlatButton(
+                                          child: new Text('CANCEL'),
+                                          onPressed: () => Navigator.pop(context, DialogAction.cancel),
+                                        ),
+                                        new FlatButton(
+                                          child: new Text('OK'),
+                                          onPressed: () => Navigator.pop(context, DialogAction.confirm),
+                                        ),
+                                      ],
+                                    )
+                                ).then<void>((DialogAction value) {
+                                  switch(value) {
+                                    case DialogAction.confirm:
+                                      print('Delete confirmed.');
+                                      setState(() => tmpDay.passages.remove(passage));
+                                      break;
+                                    case DialogAction.cancel:
+                                      print('Delete cancelled.');
+                                      break;
+                                  }
+                                }),
+                              ),
+                              title: new RichText(
+                                text: new TextSpan(
+                                  text: '${passage.toText()}',
+                                  style: Theme.of(context).textTheme.body1.copyWith(
+                                    fontSize: fontSize,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        )
+                          )
                       ).toList(),
                     ),
                   ) : new Container(

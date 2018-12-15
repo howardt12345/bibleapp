@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 
 import 'package:flutter/material.dart';
@@ -24,7 +25,12 @@ const String tutorialDialogPrefs = 'tutorial_dialog';
 
 int book, tmpBook,
     chapter, tmpChapter/*,
-      verse = 0, tmpVerse = 0*/;
+    verse = 0, tmpVerse = 0*/;
+
+FixedExtentScrollController bookController,
+    chapterController;
+ListWheelScrollView bookScrollView,
+    chapterScrollView;
 
 final initialPage = (
     .161251195141521521142025
@@ -39,14 +45,9 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
-  FixedExtentScrollController bookController,
-      chapterController;
-
-  ListWheelScrollView bookScrollView,
-      chapterScrollView;
-
-  PageController pageController = new PageController(initialPage: 1);
   SwiperController swipeController = new SwiperController();
+
+  NavigationBar navigationBar;
 
   @override
   void initState() {
@@ -58,9 +59,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   void dispose() {
     super.dispose();
     swipeController.dispose();
-    pageController.dispose();
-    bookController.dispose();
-    chapterController.dispose();
   }
 
   Future<void> fetchConfig() async {
@@ -80,45 +78,17 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
           ? bible.books[bible.books.keys.toList()[book]].chapters[chapter].length()
           : prefs.getInt(versePrefs)) ?? 0;*/
 
+      navigationBar = NavigationBar(
+        initialBook: book,
+        initialChapter: chapter,
+        confirm: (int b, int c) {
+          tmpBook = b;
+          tmpChapter = c;
+          setText();
+        },
+      );
+
       print('$book, $chapter');
-
-      bookController = new FixedExtentScrollController(
-          initialItem: book
-      );
-      chapterController = new FixedExtentScrollController(
-          initialItem: chapter
-      );
-
-      bookScrollView = ListWheelScrollView(
-        children: List.generate(bible.length(), (i) => new ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
-          title: new Text(
-            bible.books.keys.toList()[i].item2,
-            textAlign: TextAlign.center,
-            softWrap: true,
-          ),
-        )),
-        controller: bookController,
-        itemExtent: 56.0,
-        perspective: double.minPositive,
-        onSelectedItemChanged: (int index) => changeBook(index),
-        physics: FixedExtentScrollPhysics(),
-      );
-
-      chapterScrollView = new ListWheelScrollView(
-        children: List.generate(bible.books[bible.books.keys.toList()[book]].length(), (i) => new ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: new Text(
-            "${(i+1)}",
-            textAlign: TextAlign.center,
-          ),
-        )),
-        controller: chapterController,
-        itemExtent: 56.0,
-        perspective: double.minPositive,
-        onSelectedItemChanged: (int index) => changeChapter(index),
-        physics: FixedExtentScrollPhysics(),
-      );
     });
 
     if(!tutorialDialog) {
@@ -158,269 +128,199 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
     if(versionChanged && bible.books.isNotEmpty && defaultVersion.isNotEmpty) {
       _getIndex();
-      bookController = new FixedExtentScrollController(
-          initialItem: book
-      );
-      chapterController = new FixedExtentScrollController(
-          initialItem: chapter
-      );
-
-      bookScrollView = ListWheelScrollView(
-        children: List.generate(bible.length(), (i) => new ListTile(
-          contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
-          title: new Text(
-            bible.books.keys.toList()[i].item2,
-            textAlign: TextAlign.center,
-            softWrap: true,
-          ),
-        )),
-        controller: bookController,
-        itemExtent: 56.0,
-        perspective: double.minPositive,
-        onSelectedItemChanged: (int index) => changeBook(index),
-        physics: FixedExtentScrollPhysics(),
-      );
       versionChanged = false;
       changeBook(book);
     }
 
     var listAppBar = PreferredSize(
       child: new SafeArea(
-        child: new Container(
-          color: Theme.of(context).canvasColor,
-          height: 56.0,
-          alignment: Alignment.center,
-          child: new Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              new Container(
-                child: new IconButton(
-                  icon: new Icon(Icons.menu),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                margin: EdgeInsets.symmetric(horizontal: 4.0),
-              ),
-              new Expanded(
-                child: new GestureDetector(
-                  onLongPress: () {
-                    tmpBook = book;
-                    tmpChapter = chapter;
-                    setText();
-                  },
-                  onDoubleTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) => new BibleNavigation(
-                          initialBook: tmpBook,
-                          initialChapter: tmpChapter,
-                        )
-                    ).then<void>((value) {
-                      switch(value.item1) {
-                        case DialogAction.confirm:
-                          tmpBook = value.item2.item1;
-                          tmpChapter = value.item2.item2;
-                          setText();
-                          break;
-                      }
-                    });
-                  },
-                  child: new Row(
-                    children: <Widget>[
-                      new Expanded(
-                        child: bookScrollView ?? new Container(),
-                        flex: 11,
-                      ),
-                      new Expanded(
-                        child: chapterScrollView ?? new Container(),
-                        flex: 4,
-                      ),
-                    ],
-                  ),
-                ),
-                flex: 15,
-              ),
-              new Expanded(
-                child: new FlatButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: () {
-                      fetchConfig();
-                      String url = getString('bible_download');
-                      Navigator.of(context).push(
-                          new FadeAnimationRoute(builder: (context) => VersionsPage(url))
-                      );
-                    },
-                    child: new Text(
-                      defaultVersion.isEmpty ? 'NONE' : defaultVersionFormatted(),
-                      textAlign: TextAlign.left,
-                    )
-                ),
-                flex: 5,
-              ),
-              new Expanded(
-                child: new FlatButton(
-                    padding: EdgeInsets.zero,
-                    onPressed: isChanged() ? setText : null,
-                    child: new Text("OK"),
-                ),
-                flex: 4,
-              ),
-            ],
-          ),
-        ),
+        child: navigationBar
       ),
       preferredSize: new Size.fromHeight(56.0),
     );
 
     return OrientationBuilder(
-      builder: (context, orientation) {
-        return defaultVersion.isNotEmpty
-            ? Scaffold(
-          body: new SafeArea(
-              child: new Stack(
-                children: <Widget>[
-                  new GestureDetector(
-                    onDoubleTap: () {
-                      Navigator.of(context).push<Tuple2>(
-                          new FadeAnimationRoute(builder: (context) => SearchWindow())
-                      ).then<void>((Tuple2<dynamic, dynamic> value) {
-                        if(value != null) {
-                          setState(() {
-                            tmpBook = value.item1 ?? book;
-                            tmpChapter = value.item2 ?? book;
-                          });
-                          setText();
-                        }
-                      });
-                    },
-                    child: Swiper(
-                        controller: swipeController,
-                        index: bible.index(book, chapter),
-                        itemCount: bible.chaptersLength(),
-                        itemBuilder: (BuildContext context, int index) => FutureBuilder(
-                          future: bible.getPageIndex(context, index, orientation: orientation),
-                          initialData: new Center(
-                            child: new CircularProgressIndicator(),
-                          ),
-                          builder: (BuildContext context, AsyncSnapshot<Widget> data) {
-                            switch(data.connectionState) {
-                              case ConnectionState.waiting:
-                                return new Center(
-                                  child: new CircularProgressIndicator(),
-                                );
-                              default:
-                                return new Scrollbar(
-                                  child: new SingleChildScrollView(
-                                    child: data.data,
-                                  ),
-                                );
-                            }
-                          },
-                        ),
-                        onIndexChanged: (index) {
-                          setState(() {
-                            Tuple2<int, int> tmp = bible.fromIndex(index);
-                            tmpBook = tmp.item1;
-                            tmpChapter = tmp.item2;
-                          });
-                          setText();
-                        }
-                    ),
-                  ),
-                ],
-              )
-          ),
-          appBar: appBarAtTop ? listAppBar : null,
-          bottomNavigationBar: appBarAtTop ? null : listAppBar,
-        ) : new Scaffold(
-          body: new SafeArea(
+      builder: (context, orientation) => defaultVersion.isNotEmpty
+          ? Scaffold(
+        body: new SafeArea(
             child: new Stack(
               children: <Widget>[
-                new Center(
-                  child: new Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      new Container(
-                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-                        child: new Center(
-                          child: new RichText(
-                            textAlign: TextAlign.center,
-                            text: new TextSpan(
-                              text: getString('no_default_version_title'),
-                              style: Theme.of(context).textTheme.body1.copyWith(
-                                fontSize: fontSize*1.6,
-                              ),
-                            ),
-                          ),
+                new GestureDetector(
+                  onDoubleTap: () {
+                    Navigator.of(context).push<Tuple2>(
+                        new FadeAnimationRoute(builder: (context) => SearchWindow())
+                    ).then<void>((Tuple2<dynamic, dynamic> value) {
+                      if(value != null) {
+                        setState(() {
+                          tmpBook = value.item1 ?? book;
+                          tmpChapter = value.item2 ?? book;
+                        });
+                        setText();
+                      }
+                    });
+                  },
+                  child: Swiper(
+                      controller: swipeController,
+                      index: bible.index(book, chapter),
+                      itemCount: bible.chaptersLength(),
+                      itemBuilder: (BuildContext context, int index) => FutureBuilder(
+                        future: bible.getPageIndex(context, index, orientation: orientation),
+                        initialData: new Center(
+                          child: new CircularProgressIndicator(),
                         ),
-                      ),
-                      new Container(
-                        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-                        child: new Center(
-                          child: new RichText(
-                            textAlign: TextAlign.center,
-                            text: new TextSpan(
-                              text: '${getString('no_default_version_subtitle')}',
-                              style: Theme.of(context).textTheme.body1.copyWith(
-                                fontSize: fontSize,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      new FlatButton(
-                        onPressed: () {
-                          fetchConfig();
-                          String url = getString('bible_download');
-                          Navigator.of(context).push(
-                              new FadeAnimationRoute(builder: (context) => VersionsPage(url))
-                          );
+                        builder: (BuildContext context, AsyncSnapshot<Widget> data) {
+                          switch(data.connectionState) {
+                            case ConnectionState.waiting:
+                              return new Center(
+                                child: new CircularProgressIndicator(),
+                              );
+                            default:
+                              Tuple2<int, int> tmp = bible.fromIndex(index);
+                              return new Scrollbar(
+                                child: CustomScrollView(
+                                  slivers: <Widget>[
+                                    SliverList(
+                                      delegate: SliverChildListDelegate([
+                                        new Container(
+                                          height: orientation == Orientation.portrait ? fontSize*8 : fontSize*4,
+                                          margin: EdgeInsets.only(
+                                            top: orientation == Orientation.portrait ? fontSize*2 : fontSize,
+                                            bottom: fontSize,
+                                          ),
+                                          child: new Center(
+                                            child: new RichText(
+                                              textAlign: TextAlign.center,
+                                              text: new TextSpan(
+                                                  children: [
+                                                    new TextSpan(
+                                                      text: '${bible.getBookHuman(tmp.item1)}',
+                                                      style: Theme.of(context).textTheme.body1.copyWith(
+                                                        fontSize: fontSize*2,
+                                                      ),
+                                                    ),
+                                                    new TextSpan(
+                                                      text: '\n${chapter+1}',
+                                                      style: Theme.of(context).textTheme.body1.copyWith(
+                                                        fontSize: fontSize*1.6,
+                                                        fontWeight: FontWeight.w300,
+                                                      ),
+                                                    ),
+                                                  ]
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        data.data
+                                      ]),
+                                    )
+                                  ],
+                                ),
+                              );
+                          }
                         },
-                        child: new Text(getString('select_default_version')),
                       ),
-                      new Container(height: 56.0),
-                    ],
-                  ),
-                ),
-                new Align(
-                  alignment: Alignment.bottomCenter,
-                  child: new Container(
-                    decoration: new BoxDecoration(
-                      gradient: new LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
-                        tileMode: TileMode.repeated,
-                      ),
-                    ),
-                    height: 56.0,
-                    alignment: Alignment.bottomCenter,
-                    child: new Row(
-                      children: [
-                        new Expanded(
-                            child: new Container(
-                              height: 56.0,
-                              width: 56.0,
-                              child: new IconButton(
-                                icon: new Icon(Icons.arrow_back),
-                                onPressed: () => Navigator.of(context).pop(),
-                              ),
-                            ),
-                            flex: 2
-                        ),
-                        new Expanded(
-                          child: new Opacity(opacity: 0.0),
-                          flex: 11,
-                        )
-                      ],
-                    ),
+                      onIndexChanged: (index) {
+                        setState(() {
+                          Tuple2<int, int> tmp = bible.fromIndex(index);
+                          tmpBook = tmp.item1;
+                          tmpChapter = tmp.item2;
+                        });
+                        setText();
+                      }
                   ),
                 ),
               ],
-            ),
+            )
+        ),
+        appBar: appBarAtTop ? listAppBar : null,
+        bottomNavigationBar: appBarAtTop ? null : listAppBar,
+      ) : new Scaffold(
+        body: new SafeArea(
+          child: new Stack(
+            children: <Widget>[
+              new Center(
+                child: new Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    new Container(
+                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+                      child: new Center(
+                        child: new RichText(
+                          textAlign: TextAlign.center,
+                          text: new TextSpan(
+                            text: getString('no_default_version_title'),
+                            style: Theme.of(context).textTheme.body1.copyWith(
+                              fontSize: fontSize*1.6,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    new Container(
+                      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
+                      child: new Center(
+                        child: new RichText(
+                          textAlign: TextAlign.center,
+                          text: new TextSpan(
+                            text: '${getString('no_default_version_subtitle')}',
+                            style: Theme.of(context).textTheme.body1.copyWith(
+                              fontSize: fontSize,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    new FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                            new FadeAnimationRoute(builder: (context) => VersionsPage())
+                        );
+                      },
+                      child: new Text(getString('select_default_version')),
+                    ),
+                    new Container(height: 56.0),
+                  ],
+                ),
+              ),
+              new Align(
+                alignment: Alignment.bottomCenter,
+                child: new Container(
+                  decoration: new BoxDecoration(
+                    gradient: new LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
+                      tileMode: TileMode.repeated,
+                    ),
+                  ),
+                  height: 56.0,
+                  alignment: Alignment.bottomCenter,
+                  child: new Row(
+                    children: [
+                      new Expanded(
+                          child: new Container(
+                            height: 56.0,
+                            width: 56.0,
+                            child: new IconButton(
+                              icon: new Icon(Icons.arrow_back),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                          ),
+                          flex: 2
+                      ),
+                      new Expanded(
+                        child: new Opacity(opacity: 0.0),
+                        flex: 11,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        );
-      }
+        ),
+      ),
     );
   }
 
@@ -428,25 +328,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     print('changeBook');
     setState(() {
       tmpBook = b;
-      chapterScrollView = new ListWheelScrollView(
-        children: List.generate(bible.books[bible.books.keys.toList()[tmpBook]].length(), (i) => new ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: new Text(
-            "${(i+1)}",
-            textAlign: TextAlign.center,
-          ),
-        )),
-        controller: chapterController,
-        itemExtent: 56.0,
-        perspective: double.minPositive,
-        onSelectedItemChanged: (int index) => changeChapter(index),
-        physics: FixedExtentScrollPhysics(),
-      );
-      var tmp = tmpChapter;
-      chapterController.jumpToItem(bible.books[bible.books.keys.toList()[tmpBook]].length()-1);
-      if(tmp < bible.books[bible.books.keys.toList()[tmpBook]].length()) {
-        chapterController.jumpToItem(tmp);
-      }
     });
   }
 
@@ -493,7 +374,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     if(chapterController.selectedItem != chapter) {
       chapterController.jumpToItem(chapter);
     }
-    //pageController.animateToPage(1, duration: Duration(milliseconds: 500), curve: Curves.fastOutSlowIn);
+
     swipeController.move(bible.index(book, chapter), animation: false);
 
     logEvent('bible_opened', {'book': book, 'chapter': chapter, 'toText': bible.chapterAsText(new Tuple2(book, chapter))});
@@ -506,6 +387,207 @@ isChanged() {
   return book != tmpBook
       || chapter != tmpChapter
   /*|| verse != tmpVerse*/;
+}
+
+class NavigationBar extends StatefulWidget {
+  final int initialBook, initialChapter;
+  final void Function(int, int) confirm;
+
+  NavigationBar({
+    this.initialBook,
+    this.initialChapter,
+    this.confirm,
+  });
+
+  @override
+  _NavigationBarState createState() => _NavigationBarState();
+
+  static _NavigationBarState of(BuildContext context) => context.ancestorStateOfType(const TypeMatcher<_NavigationBarState>());
+
+}
+class _NavigationBarState extends State<NavigationBar> {
+
+  int _book, _chapter, _tmpBook, _tmpChapter;
+
+  @override
+  initState() {
+    super.initState();
+
+    _tmpBook = _book = widget.initialBook ?? 0;
+    _tmpChapter = _chapter = widget.initialChapter ?? 0;
+
+    bookController = new FixedExtentScrollController(
+        initialItem: book
+    );
+    chapterController = new FixedExtentScrollController(
+        initialItem: chapter
+    );
+
+    bookScrollView = ListWheelScrollView(
+      children: List.generate(bible.length(), (i) => new ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
+        title: new Text(
+          bible.books.keys.toList()[i].item2,
+          textAlign: TextAlign.center,
+          softWrap: true,
+        ),
+      )),
+      controller: bookController,
+      itemExtent: 56.0,
+      perspective: double.minPositive,
+      onSelectedItemChanged: (int index) => changeBook(index),
+      physics: FixedExtentScrollPhysics(),
+    );
+    chapterScrollView = new ListWheelScrollView(
+      children: List.generate(bible.books[bible.books.keys.toList()[book]].length(), (i) => new ListTile(
+        contentPadding: EdgeInsets.zero,
+        title: new Text(
+          "${(i+1)}",
+          textAlign: TextAlign.center,
+        ),
+      )),
+      controller: chapterController,
+      itemExtent: 56.0,
+      perspective: double.minPositive,
+      onSelectedItemChanged: (int index) => changeChapter(index),
+      physics: FixedExtentScrollPhysics(),
+    );
+  }
+  @override
+  dispose() {
+    super.dispose();
+    bookController.dispose();
+    chapterController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Theme.of(context).canvasColor,
+      height: 56.0,
+      alignment: Alignment.center,
+      child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          new Container(
+            child: new IconButton(
+              icon: new Icon(Icons.menu),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            margin: EdgeInsets.symmetric(horizontal: 4.0),
+          ),
+          new Expanded(
+            child: new GestureDetector(
+              onLongPress: () {
+                tmpBook = book;
+                tmpChapter = chapter;
+                setText();
+              },
+              onDoubleTap: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) => new BibleNavigation(
+                      initialBook: tmpBook,
+                      initialChapter: tmpChapter,
+                    )
+                ).then<void>((value) {
+                  switch(value.item1) {
+                    case DialogAction.confirm:
+                      tmpBook = value.item2.item1;
+                      tmpChapter = value.item2.item2;
+                      setText();
+                      break;
+                  }
+                });
+              },
+              child: new Row(
+                children: <Widget>[
+                  new Expanded(
+                    child: bookScrollView ?? new Container(),
+                    flex: 11,
+                  ),
+                  new Expanded(
+                    child: chapterScrollView ?? new Container(),
+                    flex: 4,
+                  ),
+                ],
+              ),
+            ),
+            flex: 15,
+          ),
+          new Expanded(
+            child: new FlatButton(
+                padding: EdgeInsets.zero,
+                onPressed: () {
+                  Navigator.of(context).push(
+                      new FadeAnimationRoute(builder: (context) => VersionsPage())
+                  );
+                },
+                child: new Text(
+                  defaultVersion.isEmpty ? 'NONE' : defaultVersionFormatted(),
+                  textAlign: TextAlign.left,
+                )
+            ),
+            flex: 5,
+          ),
+          new Expanded(
+            child: new FlatButton(
+              padding: EdgeInsets.zero,
+              onPressed: isChanged() ? setText : null,
+              child: new Text("OK"),
+            ),
+            flex: 4,
+          ),
+        ],
+      ),
+    );
+  }
+
+  setText() async {
+    setState(() {
+      book = tmpBook;
+      chapter = tmpChapter >= bible.books[bible.books.keys.toList()[book]].length()
+          ? bible.books[bible.books.keys.toList()[book]].length()-1
+          : tmpChapter;
+    });
+
+    widget.confirm(book, chapter);
+  }
+
+/*  isChanged() {
+    return _book != _tmpBook
+        || _chapter != _tmpChapter;
+  }*/
+
+  changeBook(int b) {
+    setState(() {
+      chapterScrollView = new ListWheelScrollView(
+        children: List.generate(bible.books[bible.books.keys.toList()[b]].length(), (i) => new ListTile(
+          contentPadding: EdgeInsets.zero,
+          title: new Text(
+            "${(i+1)}",
+            textAlign: TextAlign.center,
+          ),
+        )),
+        controller: chapterController,
+        itemExtent: 56.0,
+        perspective: double.minPositive,
+        onSelectedItemChanged: (int index) => changeChapter(index),
+        physics: FixedExtentScrollPhysics(),
+      );
+      tmpBook = b;
+      var tmp = tmpChapter;
+      chapterController.jumpToItem(bible.books[bible.books.keys.toList()[tmpBook]].length()-1);
+      if(tmp < bible.books[bible.books.keys.toList()[tmpBook]].length()) {
+        chapterController.jumpToItem(tmp);
+      }
+    });
+  }
+  changeChapter(int c) {
+    setState(() {
+      tmpChapter = c;
+    });
+  }
 }
 
 class BibleNavigation extends StatefulWidget {

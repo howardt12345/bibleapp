@@ -147,14 +147,14 @@ class _PassageEditPageState extends State<PassageEditPage> {
           child: new Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.clear),
                   onPressed: () {
                     Navigator.pop(context, null);
                   },
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
               new Expanded(
                 child: start != -1 && (end != start || end != -1) ? new IconButton(
@@ -166,13 +166,13 @@ class _PassageEditPageState extends State<PassageEditPage> {
                     });
                   },
                 ) : new Container(),
-                flex: 4,
+                flex: 1,
               ),
               new Expanded(
                 child: new Container(),
-                flex: 16,
+                flex: 4,
               ),
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.check),
                   onPressed: start != -1 && end != -1 ? () {
@@ -190,7 +190,7 @@ class _PassageEditPageState extends State<PassageEditPage> {
                     Navigator.pop(context, tmpPassage);
                   } : null,
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
             ],
           ),
@@ -303,17 +303,16 @@ class _PassageEditPageState extends State<PassageEditPage> {
       ),
     );
 
-    return new WillPopScope(
-      onWillPop: () { Navigator.pop(context); },
-      child: new Scaffold(
+    return new OrientationBuilder(
+      builder: (context, orientation) => new Scaffold(
         body: new SafeArea(
           child: new Stack(
             children: <Widget>[
-              new Column(
+              new ListView(
                 children: <Widget>[
                   new Container(
-                    height: fontSize*4,
-                    margin: EdgeInsets.only(top: fontSize*4),
+                    height: orientation == Orientation.portrait ? fontSize*4 : fontSize*2,
+                    margin: EdgeInsets.only(top: orientation == Orientation.portrait ? fontSize*4 : fontSize*2),
                     child: new Center(
                       child: new RichText(
                         text: new TextSpan(
@@ -327,22 +326,22 @@ class _PassageEditPageState extends State<PassageEditPage> {
                   ),
                   navigationBar,
                   radioBar,
-                  new Expanded(
-                    child: new GridView.count(
-                      crossAxisCount: 5,
-                      children: List.generate(bible.books[bible.books.keys.toList()[book]].chapters[chapter].length(),
-                            (i) => GridTile(
-                          child: new FlatButton(
-                            onPressed: () => _onSelect(i),
-                            child: new Text(
-                              "${(i+1)}",
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.body1.copyWith(
-                                  fontSize: fontSize,
-                                  color: (start <= i && end >= i)
-                                      ? Theme.of(context).accentColor
-                                      : Theme.of(context).textTheme.body1.color
-                              ),
+                  GridView.count(
+                    physics: NeverScrollableScrollPhysics(),
+                    crossAxisCount: orientation == Orientation.portrait ? 5 : 8,
+                    shrinkWrap: true,
+                    children: List.generate(bible.getBook(book).chapters[chapter].length(),
+                          (i) => GridTile(
+                        child: new FlatButton(
+                          onPressed: () => _onSelect(i),
+                          child: new Text(
+                            "${(i+1)}",
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.body1.copyWith(
+                                fontSize: fontSize,
+                                color: (start <= i && end >= i)
+                                    ? Theme.of(context).accentColor
+                                    : Theme.of(context).textTheme.body1.color
                             ),
                           ),
                         ),
@@ -366,7 +365,7 @@ class _PassageEditPageState extends State<PassageEditPage> {
         setState(() => start = end = index);
         break;
       case 1:
-        if(index < start || start == -1) {
+        if(index < start || start == -1 || start != end) {
           setState(() => start = end = index);
           break;
         }
@@ -437,6 +436,11 @@ class _PassageEditPageState extends State<PassageEditPage> {
         physics: FixedExtentScrollPhysics(),
       );
       tmpBook = b;
+      var tmp = tmpChapter;
+      chapterController.jumpToItem(bible.books[bible.books.keys.toList()[tmpBook]].length()-1);
+      if(tmp < bible.books[bible.books.keys.toList()[tmpBook]].length()) {
+        chapterController.jumpToItem(tmp);
+      }
     });
     setText();
   }

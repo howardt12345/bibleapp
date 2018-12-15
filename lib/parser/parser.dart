@@ -39,6 +39,7 @@ class Parser {
     }
   ) : _style = Theme.of(context).textTheme.body1.copyWith(
     fontSize: fontSize,
+    height: fontSpacing,
   );
 
 
@@ -118,7 +119,7 @@ class Parser {
               if(start != null && end != null) {
                 _tryCloseCurrentTextSpan(newLine: ((start) < verse && (verse-1) <= (end)));
               } else {
-                _tryCloseCurrentTextSpan(newLine: true);
+                _tryCloseCurrentTextSpan(newLine: false);
               }
             }
           } else {
@@ -137,11 +138,13 @@ class Parser {
         _style = Theme.of(context).textTheme.body1.copyWith(
           fontSize: fontSize,
           fontWeight: FontWeight.w500,
+          height: fontSpacing*2,
         );
         element.nodes.forEach((subNode) => _parseNode(subNode));
-        _tryCloseCurrentTextSpan(newLine: true);
+        _tryCloseCurrentTextSpan(newLine: false);
         _style = Theme.of(context).textTheme.body1.copyWith(
           fontSize: fontSize,
+          height: fontSpacing,
         );
         return;
       case 'i':
@@ -297,7 +300,7 @@ class Parser {
   void _appendToCurrentTextSpans(dynamic stringOrTextSpan, {
     FontStyle style = FontStyle.normal, 
     FontWeight weight = FontWeight.normal, 
-    int script = 0
+    int script = 0,
   }) {
     // print('=== appending to _currentTextSpan: ' + textOrLink.toString());
     switch (stringOrTextSpan.runtimeType) {
@@ -315,7 +318,7 @@ class Parser {
         } else {
           _currentTextSpans.add(new TextSpan(
             text: stringOrTextSpan,
-            style:_style.copyWith(
+            style: _style.copyWith(
               fontStyle: style,
             ),
           ));

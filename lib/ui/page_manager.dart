@@ -20,6 +20,7 @@ String changelog =
     '- Improved swiping between chapters.'
     '\n- Fixed several bugs regarding bible navigation.'
     '\n- Fixed several bugs regarding the Plan page.'
+    '\n- Added Font Spacing as a setting.'
     '\n\nKnown Bugs: '
     '\n- Contact the developer if any bugs are found.'
     '\n\nIn Progress:'
@@ -250,7 +251,7 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
       builder: (BuildContext context) => new AlertDialog(
         title: new Text('${getString('test_title')} ${versionText().trim()}.'),
         content: new GestureDetector(
-          onTap: () => Clipboard.setData(ClipboardData(text: firebaseMessagingToken)),
+          onTap: null,
           child: new Text('Changelog: \n$changelog'),
         ),
         actions: <Widget>[

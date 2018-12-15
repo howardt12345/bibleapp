@@ -5,6 +5,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/services.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:bible/ui/app.dart';
@@ -22,6 +24,8 @@ const String animationSpeedPrefs = 'animationSpeed';
 const String appBarLocationPrefs = 'appBarLocation';
 const String fontPrefs = 'font';
 const String fontSizePrefs = 'fontSize';
+const String fontSpacingPrefs = 'fontSpacing';
+
 
 typedef Widget SettingsItemBodyBuilder<T>(SettingsItem<T> item);
 typedef String ValueToString<T>(T value);
@@ -51,6 +55,7 @@ enum FontEnum {
 }
 
 double fontSize = 20.0;
+double fontSpacing = 1.5;
 String fontFamily;
 String defaultFont = 'Roboto';
 bool appBarAtTop = false;
@@ -81,6 +86,7 @@ List<ThemeData> themeList = [
     primarySwatch: primarySwatch,
     fontFamily: defaultFont,
     brightness: Brightness.dark,
+    backgroundColor: Color(0xFF000000),
     canvasColor: Color(0xFF000000),
     cardColor: Color(0xFF000000),
     sliderTheme: ThemeData.dark().sliderTheme.copyWith(
@@ -94,6 +100,37 @@ List<Page> pages = [];
 
 String capitalize(String s) => s[0].toUpperCase() + s.substring(1);
 
+saveTheme(int index) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setInt(themePrefs, index);
+  print("Saved ${AppTheme.values[index].toString().split('.')[1].replaceAll('_', ' ')} as theme.");
+}
+saveAnimationSpeed(double value) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setDouble(animationSpeedPrefs, value);
+  print("Saved $value as Animation Speed.");
+}
+saveAppBarLocation(int value) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setInt(appBarLocationPrefs, value);
+  print("Saved ${value == 0 ? 'top' : 'bottom'} as App Bar Location.");
+}
+saveFont(String font) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString(fontPrefs, font);
+  print("Saved $font as Font.");
+}
+saveFontSize(double value) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setDouble(fontSizePrefs, value);
+  print("Saved $value as Font Size.");
+}
+saveFontSpacing(double value) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setDouble(fontSpacingPrefs, value);
+  print("Saved $value as Font Spacing.");
+}
+
 class SettingsPage extends StatefulWidget {
   static _SettingsPageState of(BuildContext context) => context.ancestorStateOfType(new TypeMatcher<_SettingsPageState>());
 
@@ -104,32 +141,6 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   List<SettingsItem<dynamic>> _lookAndFeelSettings,
                               _fontSettings;
-
-  saveTheme(int index) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt(themePrefs, index);
-    print("Saved ${AppTheme.values[index].toString().split('.')[1].replaceAll('_', ' ')} as theme.");
-  }
-  saveAnimationSpeed(double value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setDouble(animationSpeedPrefs, value);
-    print("Saved $value as Animation Speed.");
-  }
-  saveAppBarLocation(int value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt(appBarLocationPrefs, value);
-    print("Saved ${value == 0 ? 'top' : 'bottom'} as App Bar Location.");
-  }
-  saveFont(String font) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(fontPrefs, font);
-    print("Saved $font as Font.");
-  }
-  saveFontSize(double value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setDouble(fontSizePrefs, value);
-    print("Saved $value as Font Size.");
-  }
 
   @override
   void initState() {
@@ -449,6 +460,77 @@ class _SettingsPageState extends State<SettingsPage> {
                                   text: getString('settings_fontSize_testText'),
                                   style: Theme.of(context).textTheme.body1.copyWith(
                                     fontSize: field.value,
+                                    height: fontSpacing,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    );
+                  }
+              ),
+            );
+          }
+      ),
+      new SettingsItem<double>(
+          name: getString('settings_fontSpacing'),
+          value: fontSpacing,
+          hint: getString('settings_fontSpacing_hint'),
+          valueToString: (double amount) => '$amount',
+          builder: (SettingsItem<double> item) {
+            void close() {
+              setState(() {
+                item.isExpanded = false;
+              });
+            }
+            return new Form(
+              child: new Builder(
+                  builder: (BuildContext context) {
+                    return new CollapsibleBody(
+                      cancel: getString('settings_cancel'),
+                      save: getString('settings_save'),
+                      onSave: () { Form.of(context).save(); close(); },
+                      onCancel: () { Form.of(context).reset(); close(); },
+                      child: new FormField<double>(
+                        initialValue: item.value,
+                        onSaved: (double value) {
+                          item.value = value;
+                          setState(() => fontSpacing = value);
+                          logEvent('change_setting', {'setting': getString('settings_fontSpacing'), 'value': value});
+                          saveFontSpacing(value);
+                        },
+                        builder: (FormFieldState<double> field) {
+                          return new Column(
+                            children: <Widget>[
+                              new Row(
+                                children: <Widget>[
+                                  new Flexible(
+                                    child: new Slider(
+                                      min: 1.0,
+                                      max: 2.0,
+                                      divisions: 8,
+                                      label: '${field.value.round()}',
+                                      value: field.value,
+                                      onChanged: field.didChange,
+                                    ),
+                                  ),
+                                  new Container(
+                                    child: new Text(
+                                        '${field.value}',
+                                        style: Theme.of(context).textTheme.caption
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              new RichText(
+                                textAlign: TextAlign.left,
+                                text: new TextSpan(
+                                  text: getString('settings_fontSize_testText'),
+                                  style: Theme.of(context).textTheme.body1.copyWith(
+                                    fontSize: fontSize,
+                                    height: field.value,
                                   ),
                                 ),
                               ),
@@ -489,10 +571,8 @@ class _SettingsPageState extends State<SettingsPage> {
                         alignment: Alignment.centerRight,
                         child: new FlatButton(
                           onPressed: () {
-                            fetchConfig();
-                            String url = getString('bible_download');
                             Navigator.of(context).push(
-                                new FadeAnimationRoute(builder: (context) => VersionsPage(url))
+                                new FadeAnimationRoute(builder: (context) => VersionsPage())
                             );
                           },
                           child: new Text(
@@ -889,6 +969,25 @@ class _DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
                           text: getString('title_settings_developer'),
                           style: Theme.of(context).textTheme.body1.copyWith(
                             fontSize: fontSize*2,
+                          ),
+                          recognizer: TapGestureRecognizer()..onTap = () => showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => new AlertDialog(
+                                title: new Text('Firebase Messaging Token'),
+                                content: new GestureDetector(
+                                  child: new Text('Your Firebase Messaging Token is: $firebaseMessagingToken. \nTap to copy the token.'),
+                                  onTap: () => Clipboard.setData(ClipboardData(text: firebaseMessagingToken)),
+                                  onDoubleTap: () => Share.share(firebaseMessagingToken),
+                                ),
+                                actions: <Widget>[
+                                  new FlatButton(
+                                    child: new Text('CLOSE'),
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              )
                           ),
                         ),
                       ),

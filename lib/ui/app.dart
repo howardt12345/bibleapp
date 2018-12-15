@@ -38,7 +38,7 @@ User user;
 
 String firebaseMessagingToken = '';
 
-String currentVersion = '0.3.0-a';
+String currentVersion = '0.4.1-a';
 
 String ipAddress;
 
@@ -117,6 +117,7 @@ class _AppState extends State<App> {
       appBarAtTop = prefs.getInt(appBarLocationPrefs) == 0;
       timeDilation = prefs.getDouble(animationSpeedPrefs) ?? 1.0;
       fontSize = prefs.getDouble(fontSizePrefs) ?? 20.0;
+      fontSpacing = prefs.getDouble(fontSpacingPrefs) ?? 1.5;
 
       newVersion = prefs.getBool(currentVersion) ?? false;
       developerSettings = prefs.getBool('developer_settings') ?? false;
@@ -128,6 +129,7 @@ class _AppState extends State<App> {
       checkerboardRasterCacheImages = prefs.get('checkerboardRasterCacheImages') ?? false;
 
       defaultVersion = prefs.getString(defaultVersionPrefs) ?? '';
+
     });
     await bible.setDefaultVersion();
     setState(() => _loadingInProgress = false);
@@ -298,8 +300,8 @@ Future<RemoteConfig> setupRemoteConfig() async {
     'plan_passage_edit_all': 'All',
     'plan_share': 'Share Plan',
     'plan_progress': 'Progress',
-
-
+    'settings_fontSpacing': 'Font Spacing',
+    'settings_fontSpacing_hint': 'Select Font Spacing',
 
   });
 

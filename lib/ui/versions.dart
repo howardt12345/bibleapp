@@ -24,9 +24,6 @@ final _changeNotifier = new StreamController.broadcast();
 class VersionsPage extends StatefulWidget {
   static _VersionsPageState of(BuildContext context) => context.ancestorStateOfType(TypeMatcher<_VersionsPageState>());
 
-  final String url;
-  VersionsPage(this.url);
-
   @override
   _VersionsPageState createState() => new _VersionsPageState();
 }
@@ -45,7 +42,7 @@ class _VersionsPageState extends State<VersionsPage> {
     initialize();
   }
   initialize() async {
-    await versionsManager.initialize(widget.url).then((void v) {
+    await versionsManager.initialize(getString('bible_download')).then((void v) {
       setState(() => _loadingInProgress = false);
       print('Done initializing VersionManager');
     });

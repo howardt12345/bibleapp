@@ -349,11 +349,9 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                   ),
                   new FlatButton(
                     onPressed: () {
-                      fetchConfig();
-                      String url = getString('bible_download');
                       Navigator.of(context).push(
                         new FadeAnimationRoute(builder: (context) =>
-                          VersionsPage(url))
+                          VersionsPage())
                       );
                     },
                     child: new Text(
@@ -462,11 +460,13 @@ class Plan {
     String name,
     String description,
     List<Day> days,
+    DateTime startingDate,
   }) {
     assert(canEdit == true);
     this.name = name;
     this.description = description;
     this.days = days != null ? days : this.days;
+    this.startingDate = startingDate;
 
     if(key == null) {
       planManager.addPlan(this);

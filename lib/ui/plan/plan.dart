@@ -455,7 +455,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
               new ListView(
                 children: <Widget>[
                   new Container(
-                    margin: EdgeInsets.only(top: fontSize*2),
+                    margin: EdgeInsets.only(top: orientation == Orientation.portrait ? fontSize*2 : fontSize),
                     child: new Center(
                       child: new RichText(
                         text: new TextSpan(

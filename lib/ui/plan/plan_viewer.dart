@@ -70,8 +70,32 @@ class _PlanViewerPageState extends State<PlanViewerPage> {
         ),
         builder: (BuildContext context, AsyncSnapshot<Widget> data) {
           return Scrollbar(
-            child: new SingleChildScrollView(
-              child: data.data,
+            child: CustomScrollView(
+              slivers: <Widget>[
+                SliverList(
+                  delegate: SliverChildListDelegate([
+                    new Container(
+                      height: fontSize*2.5,
+                      margin: EdgeInsets.only(top: appBarAtTop ? 56.0 : 0.0),
+                      child: new Center(
+                        child: new RichText(
+                          text: new TextSpan(
+                            text: '${bible.getBookHuman(widget.day.passages[index].start.item1)} ${widget.day.passages[index].start.item2+1}:'
+                                '${widget.day.passages[index].start.item3+1}-'
+                                '${widget.day.passages[index].end.item3 >= bible.getBook(widget.day.passages[index].start.item1).chapters[widget.day.passages[index].start.item2].length()
+                                ? bible.getBook(widget.day.passages[index].start.item1).chapters[widget.day.passages[index].start.item2].length()
+                                : widget.day.passages[index].end.item3+1}',
+                            style: Theme.of(context).textTheme.body1.copyWith(
+                              fontSize: fontSize*1.25,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    data.data
+                  ]),
+                )
+              ],
             ),
           );
         },
@@ -89,12 +113,12 @@ class _PlanViewerPageState extends State<PlanViewerPage> {
           child: new Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.arrow_back),
                   onPressed: () { Navigator.pop(context); },
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
               new Expanded(
                 child: new Row(
@@ -144,7 +168,7 @@ class _PlanViewerPageState extends State<PlanViewerPage> {
                 ),
                 flex: 20,
               ),
-              new Expanded(
+              new Container(
                 child: new Container(
                   child: currentIndex >= (widget.day.passages.length-1) ?
                   new IconButton(
@@ -161,7 +185,7 @@ class _PlanViewerPageState extends State<PlanViewerPage> {
                     } : null,
                   ),
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
             ],
           ),

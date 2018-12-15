@@ -154,10 +154,10 @@ class Bible {
 
       int book = corrected.item1, chapter = corrected.item2;
 
-      print('getPage: ${books.keys.toList()[book].item1}.${chapter+1}');
+      print('getPage: ${getBookOsis(book)}.${chapter+1}');
 
-      List<Map> data = await database.rawQuery('SELECT content FROM chapters WHERE rowid = ${books[books.keys.toList()[book]].chapters[chapter].index+1}'),
-          rawAnnotations = await database.rawQuery("SELECT link,content FROM annotations WHERE osis LIKE '%${books.keys.toList()[book].item1}.${chapter+1}%'");
+      List<Map> data = await database.rawQuery('SELECT content FROM chapters WHERE rowid = ${getBook(book).chapters[chapter].index+1}'),
+          rawAnnotations = await database.rawQuery("SELECT link,content FROM annotations WHERE osis LIKE '%${getBookOsis(book)}.${chapter+1}%'");
       Map annotations = Map.fromIterable(rawAnnotations,
         key: (item) => item['link'],
         value: (item) => item['content'],
@@ -166,7 +166,7 @@ class Bible {
       return defaultVersion.isNotEmpty
           ? new Column(
         children: <Widget>[
-          start == null || end == null ? new Container(
+          /*start == null || end == null ? new Container(
             height: fontSize*8,
             margin: EdgeInsets.only(
               top: fontSize*2,
@@ -178,7 +178,7 @@ class Bible {
                 text: new TextSpan(
                     children: [
                       new TextSpan(
-                        text: '${books.keys.toList()[book].item2}',
+                        text: '${getBookHuman(book)}',
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize*2,
                         ),
@@ -200,10 +200,10 @@ class Bible {
             child: new Center(
               child: new RichText(
                 text: new TextSpan(
-                  text: '${books.keys.toList()[book].item2} ${chapter+1}:'
+                  text: '${getBookHuman(book)} ${chapter+1}:'
                       '${start+1}-'
-                      '${end >= books[books.keys.toList()[book]].chapters[chapter].length()
-                      ? books[books.keys.toList()[book]].chapters[chapter].length()
+                      '${end >= getBook(book).chapters[chapter].length()
+                      ? getBook(book).chapters[chapter].length()
                       : end+1}',
                   style: Theme.of(context).textTheme.body1.copyWith(
                     fontSize: fontSize*1.25,
@@ -211,7 +211,7 @@ class Bible {
                 ),
               ),
             ),
-          ),
+          ),*/
           new Container(
             margin: EdgeInsets.only(
               left: 8.0,
@@ -224,7 +224,7 @@ class Bible {
               chapter: c+1,
               start: start,
               end: end,
-              osis: books.keys.toList()[book].item1,
+              osis: getBookOsis(book),
             ).fromHtml(data[0]['content']),
           ),
         ],
@@ -243,10 +243,10 @@ class Bible {
 
       int book = corrected.item1, chapter = corrected.item2;
 
-      print('getPage: ${books.keys.toList()[book].item1}.${chapter+1}');
+      print('getPage: ${getBookOsis(book)}.${chapter+1}');
 
-      List<Map> data = await database.rawQuery('SELECT content FROM chapters WHERE rowid = ${books[books.keys.toList()[book]].chapters[chapter].index+1}'),
-          rawAnnotations = await database.rawQuery("SELECT link,content FROM annotations WHERE osis LIKE '%${books.keys.toList()[book].item1}.${chapter+1}%'");
+      List<Map> data = await database.rawQuery('SELECT content FROM chapters WHERE rowid = ${getBook(book).chapters[chapter].index+1}'),
+          rawAnnotations = await database.rawQuery("SELECT link,content FROM annotations WHERE osis LIKE '%${getBookOsis(book)}.${chapter+1}%'");
       Map annotations = Map.fromIterable(rawAnnotations,
         key: (item) => item['link'],
         value: (item) => item['content'],
@@ -255,7 +255,7 @@ class Bible {
       return defaultVersion.isNotEmpty
           ? new Column(
         children: <Widget>[
-          start == null || end == null ? new Container(
+          /*start == null || end == null ? new Container(
             height: orientation == Orientation.portrait ? fontSize*8 : fontSize*4,
             margin: EdgeInsets.only(
               top: orientation == Orientation.portrait ? fontSize*2 : fontSize,
@@ -267,7 +267,7 @@ class Bible {
                 text: new TextSpan(
                     children: [
                       new TextSpan(
-                        text: '${books.keys.toList()[book].item2}',
+                        text: '${getBookHuman(book)}',
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize*2,
                         ),
@@ -289,10 +289,10 @@ class Bible {
             child: new Center(
               child: new RichText(
                 text: new TextSpan(
-                  text: '${books.keys.toList()[book].item2} ${chapter+1}:'
+                  text: '${getBookHuman(book)} ${chapter+1}:'
                       '${start+1}-'
-                      '${end >= books[books.keys.toList()[book]].chapters[chapter].length()
-                      ? books[books.keys.toList()[book]].chapters[chapter].length()
+                      '${end >= getBook(book).chapters[chapter].length()
+                      ? getBook(book).chapters[chapter].length()
                       : end+1}',
                   style: Theme.of(context).textTheme.body1.copyWith(
                     fontSize: fontSize*1.25,
@@ -300,7 +300,7 @@ class Bible {
                 ),
               ),
             ),
-          ),
+          ),*/
           new Container(
             margin: EdgeInsets.symmetric(horizontal: 16.0),
             child: new Parser(
@@ -310,7 +310,7 @@ class Bible {
               chapter: book+1,
               start: start,
               end: end,
-              osis: books.keys.toList()[book].item1,
+              osis: getBookOsis(book),
             ).fromHtml(data[0]['content']),
           ),
         ],
@@ -339,7 +339,7 @@ class Bible {
     String query = 'SELECT book,verse,unformatted '
         'FROM verses '
         'WHERE id '
-        'in (${verses.map((v) => books[books.keys.toList()[v.item1]].chapters[v.item2].verses[v.item3].id+1).toList().join(", ")})';
+        'in (${verses.map((v) => getBook(v.item1).chapters[v.item2].verses[v.item3].id+1).toList().join(", ")})';
     return query;
   }
 
@@ -351,12 +351,12 @@ class Bible {
 
   String chapterAsText(Tuple2<int, int> chapter) {
     Tuple2 corrected = new PassageChecker(bible: this).correctChapter(chapter);
-    return '${books.keys.toList()[corrected.item1].item2} ${corrected.item2+1}';
+    return '${getBookHuman(corrected.item1)} ${corrected.item2+1}';
   }
 
   String verseAsText(Tuple3<int, int, int> verse) {
     Tuple3 corrected = new PassageChecker(bible: this).correctVerse(verse);
-    return '${books.keys.toList()[corrected.item1].item2} ${corrected.item2+1}:${corrected.item3+1}';
+    return '${getBookHuman(corrected.item1)} ${corrected.item2+1}:${corrected.item3+1}';
   }
 
   index(int book, int chapter) => books.values.toList()[book].chapters[chapter].index;
@@ -375,6 +375,10 @@ class Bible {
 
     return Tuple2(b-1, c);
   }
+
+  getBook(int index) => books.values.toList()[index];
+  getBookHuman(int index) => '${books.keys.toList()[index].item2}';
+  getBookOsis(int index) => '${books.keys.toList()[index].item1}';
 
   length() => books.length;
   chaptersLength() => books.values.toList().last.chapters.last.index+1;

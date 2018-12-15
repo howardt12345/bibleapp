@@ -47,19 +47,18 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
           child: new Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.arrow_back),
-                  onPressed: () { Navigator.pop(context); },
+                  onPressed: () => Navigator.of(context).pop(),
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
               new Expanded(
                 child: new Container(),
-                flex: 20,
               ),
-              new Expanded(
-                child: user != null ? new IconButton(
+              user != null ? Container(
+                child: new IconButton(
                   icon: new Icon(Icons.menu),
                   onPressed: () {
                     Navigator.of(context).push(
@@ -69,9 +68,9 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                       });
                     });
                   },
-                ) : new Container(),
-                flex: 4,
-              ),
+                ),
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
+              ) : new Container(),
             ],
           ),
         ),
@@ -79,9 +78,8 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
       preferredSize: new Size.fromHeight(56.0),
     );
 
-    return new WillPopScope(
-      onWillPop: () { Navigator.pop(context); },
-      child: new Scaffold(
+    return new OrientationBuilder(
+      builder: (context, orientation) => new Scaffold(
         body: new SafeArea(
           child: new Stack(
             children: <Widget>[
@@ -89,7 +87,7 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                 children: <Widget>[
                   new Container(
                     margin: EdgeInsets.only(
-                      top: fontSize*4,
+                      top: orientation == Orientation.portrait ? fontSize*4 : fontSize*2,
                       left: 16.0,
                       right: 16.0,
                       bottom: 8.0,
@@ -238,7 +236,8 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                               text: 'Day ${widget.plan.days.indexOf(day)+1}',
                               style: Theme.of(context).textTheme.body1.copyWith(
                                   fontSize: fontSize,
-                                  color: widget.plan.startingDate != null && DateTime.now().difference(widget.plan.startingDate).inDays == widget.plan.days.indexOf(day)
+                                  color: widget.plan.startingDate != null
+                                      && new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).difference(widget.plan.startingDate).inDays == widget.plan.days.indexOf(day)
                                       ? Theme.of(context).accentColor
                                       : Theme.of(context).textTheme.body1.color
                               ),
@@ -376,14 +375,14 @@ class _PlanEditPageState extends State<PlanEditPage> {
           child: new Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.clear),
                   onPressed: () {
                     Navigator.pop(context, null);
                   },
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
               new Expanded(
                 child: new IconButton(
@@ -394,17 +393,18 @@ class _PlanEditPageState extends State<PlanEditPage> {
                         name: widget.plan.name,
                         description: widget.plan.description,
                         days: widget.plan.days,
+                        startingDate: widget.plan.startingDate,
                       ));
                     } catch(e) {
                       setState(() => tmpPlan = new Plan(canEdit: true));
                     }
                   },
                 ),
-                flex: 4,
+                flex: 1,
               ),
               new Expanded(
                 child: new Container(),
-                flex: 12,
+                flex: 3,
               ),
               new Expanded(
                 child: !addButtonFAB ? new IconButton(
@@ -416,9 +416,9 @@ class _PlanEditPageState extends State<PlanEditPage> {
                       tmpPlan.days.add(onValue);
                   })),
                 ) : new Container(),
-                flex: 4,
+                flex: 1,
               ),
-              new Expanded(
+              new Container(
                 child: new IconButton(
                   icon: new Icon(Icons.check),
                   onPressed: () {
@@ -427,6 +427,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
                         name: titleController.text,
                         description: descriptionController.text,
                         days: tmpPlan.days,
+                        startingDate: tmpPlan.startingDate
                       );
                     } catch(e) {
                       tmpPlan.applyEdit(
@@ -437,7 +438,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
                     Navigator.pop(context, tmpPlan);
                   },
                 ),
-                flex: 4,
+                margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
             ],
           ),
@@ -446,9 +447,8 @@ class _PlanEditPageState extends State<PlanEditPage> {
       preferredSize: new Size.fromHeight(56.0),
     );
 
-    return new WillPopScope(
-      onWillPop: () { Navigator.pop(context); },
-      child: new Scaffold(
+    return new OrientationBuilder(
+      builder: (context, orientation) => new Scaffold(
         body: new SafeArea(
           child: new Stack(
             children: <Widget>[
@@ -533,7 +533,13 @@ class _PlanEditPageState extends State<PlanEditPage> {
                                 ),
                               ),
                             ),
-                            new Switch(value: schedule, onChanged: (value) => setState(() => schedule = value))
+                            new Switch(value: schedule, onChanged: (value) {
+                              setState(() {
+                                schedule = value;
+                                if(schedule == true && tmpPlan.startingDate == null)
+                                  tmpPlan.startingDate = DateTime.now();
+                              });
+                            })
                           ],
                         ),
                         /*new Row(
@@ -616,7 +622,8 @@ class _PlanEditPageState extends State<PlanEditPage> {
                               text: 'Day ${tmpPlan.days.indexOf(day)+1}',
                               style: Theme.of(context).textTheme.body1.copyWith(
                                   fontSize: fontSize,
-                                  color: tmpPlan.startingDate != null && DateTime.now().difference(tmpPlan.startingDate).inDays == tmpPlan.days.indexOf(day)
+                                  color: tmpPlan.startingDate != null
+                                      && new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).difference(tmpPlan.startingDate).inDays == tmpPlan.days.indexOf(day)
                                       ? Theme.of(context).accentColor
                                       : Theme.of(context).textTheme.body1.color
                               ),
@@ -745,7 +752,7 @@ class DateItem extends StatelessWidget {
     DateTime dateTimePicked = await showDatePicker(
         context: context,
         initialDate: date,
-        firstDate: date,
+        firstDate: date.subtract(const Duration(days: 20000)),
         lastDate: date.add(const Duration(days: 20000)));
 
     if (dateTimePicked != null) {

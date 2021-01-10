@@ -61,13 +61,15 @@ Future<FirebaseUser> signInWithGoogle() async {
     currentUser = await _googleSignIn.signIn();
   }
 
-  final GoogleSignInAuthentication auth = await currentUser.authentication;
+  final GoogleSignInAuthentication googleSignInAuthentication = await currentUser.authentication;
 
-  // Authenticate with firebase
-  final FirebaseUser user = await _auth.signInWithGoogle(
-    idToken: auth.idToken,
-    accessToken: auth.accessToken,
+  final AuthCredential credential = GoogleAuthProvider.getCredential(
+    accessToken: googleSignInAuthentication.accessToken,
+    idToken: googleSignInAuthentication.idToken,
   );
+
+  final AuthResult authResult = await _auth.signInWithCredential(credential);
+  final FirebaseUser user = authResult.user;
 
   assert(user != null);
   assert(!user.isAnonymous);
@@ -87,20 +89,29 @@ Future<Null> signOutWithGoogle() async {
 
 Future<FirebaseUser> signInWithFacebook() async {
 
-  final FacebookLoginResult result = await _facebookSignIn.logInWithReadPermissions(['email']);
+  final FacebookLoginResult result = await _facebookSignIn.logIn(['email']);
 
-  FirebaseUser user = await _auth.signInWithFacebook(
-      accessToken: result.accessToken.token
-  );
+  final accessToken = result.accessToken.token;
+  if (result.status == FacebookLoginStatus.loggedIn) {
+    final facebookAuthCred = FacebookAuthProvider.getCredential(
+        accessToken: accessToken);
 
-  assert(user != null);
-  assert(!user.isAnonymous);
+    final AuthResult authResult = await _auth.signInWithCredential(facebookAuthCred);
 
-  await saveUser(user, SignInMethod.facebook);
+    final FirebaseUser user = authResult.user;
 
-  print(user);
+    assert(user != null);
+    assert(!user.isAnonymous);
 
-  return user;
+    await saveUser(user, SignInMethod.facebook);
+
+    print(user);
+
+    return user;
+  } else {
+    return null;
+  }
+
 }
 Future<Null> signOutWithFacebook() async {
   await _auth.signOut();
@@ -117,9 +128,11 @@ Future<FirebaseUser> signInWithEmail({
   FirebaseUser user;
 
   if(!signUp) {
-    user = await _auth.signInWithEmailAndPassword(email: email, password: password);
+    AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+    user = result.user;
   } else {
-    user = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    user = result.user;
   }
 
   saveUser(user, SignInMethod.email, displayName: displayName);
@@ -205,7 +218,7 @@ Future<Null> saveUser(FirebaseUser user, SignInMethod method, {String displayNam
             await dio.download(
                 '${onValue.data['photoUrl']}',
                 '$dir/${user.uid}.jpg',
-                onProgress: (received, total) {
+                onReceiveProgress: (received, total) {
                   print(received / total);
                 }
             );
@@ -238,7 +251,7 @@ Future<Null> downloadProfilePic(FirebaseUser user, SignInMethod method) async {
         await dio.download(
             '${user.photoUrl}?sz=200',
             '$dir/${user.uid}.jpg',
-            onProgress: (received, total) {
+            onReceiveProgress: (received, total) {
               print(received/total);
             }
         );
@@ -253,7 +266,7 @@ Future<Null> downloadProfilePic(FirebaseUser user, SignInMethod method) async {
         await dio.download(
             '${user.photoUrl}?type=large',
             '$dir/${user.uid}.jpg',
-            onProgress: (received, total) {
+            onReceiveProgress: (received, total) {
               print(received / total);
             }
         );

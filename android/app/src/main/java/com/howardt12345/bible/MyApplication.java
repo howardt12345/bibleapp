@@ -3,8 +3,8 @@ package com.howardt12345.bible;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.support.multidex.MultiDex;
-import android.support.annotation.CallSuper;
+import androidx.multidex.MultiDex;
+import androidx.annotation.CallSuper;
 
 import io.flutter.view.FlutterMain;
 

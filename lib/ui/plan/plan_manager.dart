@@ -4,34 +4,22 @@ import 'dart:core';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:bible/ui/account/profile.dart';
-import 'package:bible/ui/page_manager.dart';
 import 'package:bible/ui/plan/qr.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
-import 'package:firebase_database/ui/firebase_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:share/share.dart';
 import 'package:tuple/tuple.dart';
-import 'package:uuid/uuid.dart';
 
-import 'package:bible/bible.dart';
-import 'package:bible/ui/account/login.dart';
 import 'package:bible/ui/app.dart';
 import 'package:bible/ui/plan_manager_page.dart';
 import 'package:bible/ui/plan/plan.dart';
 import 'package:bible/ui/plan/plan_days.dart';
 import 'package:bible/ui/settings.dart';
-import 'package:bible/ui/versions.dart';
 
 class PlanManager {
 
-  List<Plan> plans = new List<Plan>();
+  List<Plan> plans = [];
 
   DatabaseReference planRef, userRef, progressRef;
 
@@ -42,29 +30,29 @@ class PlanManager {
   }
 
   Widget getPlans() {
-    return user == null ? new FutureBuilder(
+    return user == null ? FutureBuilder(
       future: getPlansFromFile(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if(snapshot.data == null) {
-          return new Container();
+          return Container();
         } else {
           return planWidget(context);
         }
       },
-    ) : new FutureBuilder(
+    ) : FutureBuilder(
         future: FirebaseDatabase.instance.reference().child('users').child(user.uid).once(),
         builder: (BuildContext context, AsyncSnapshot<DataSnapshot> snapshot) {
           switch(snapshot.connectionState) {
             case ConnectionState.waiting:
-              return new Center(
+              return Center(
                 child: CircularProgressIndicator(),
               );
             default:
               if(!snapshot.hasData || snapshot.data.value == null)
-                return new Container();
+                return Container();
 
               List planIds = snapshot.data.value.keys.toList();
-              plans.clear();
+              plans = [];
 
               return FutureBuilder(
                 future: /*Future.wait(planIds.map((id) async => await planRef.child(id).once().then((onValue) async {
@@ -72,7 +60,7 @@ class PlanManager {
 
                   var progress = (await progressRef.child(onValue.key).child(user.uid).once()).value;
 
-                  Plan plan = new Plan.fromJson(onValue.key, onValue.value, progress);
+                  Plan plan = Plan.fromJson(onValue.key, onValue.value, progress);
                   await getProgress(plan);
                   plans.add(plan);
                 })))*/Future.forEach(planIds, (id) async => await planRef.child(id).once().then((onValue) async {
@@ -80,14 +68,14 @@ class PlanManager {
 
                   var progress = (await progressRef.child(onValue.key).child(user.uid).once()).value;
 
-                  Plan plan = new Plan.fromJson(onValue.key, onValue.value, progress);
+                  Plan plan = Plan.fromJson(onValue.key, onValue.value, progress);
                   await getProgress(plan);
                   plans.add(plan);
                 })),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   switch(snapshot.connectionState) {
                     case ConnectionState.waiting:
-                      return new Center(
+                      return Center(
                         child: CircularProgressIndicator(),
                       );
                     default:
@@ -101,32 +89,32 @@ class PlanManager {
   }
 
   Widget planWidget(BuildContext context) {
-    return new Container(
+    return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.0),
-      child: plans != null && plans.isNotEmpty ? new Column(
+      child: plans != null && plans.isNotEmpty ? Column(
         children: plans.map(
-                (plan) => new Card(
+                (plan) => Card(
               elevation: 1.0,
-              child: new Column(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  new ListTile(
+                  ListTile(
                     contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     onTap: () {
                       Navigator.of(context).push(
-                          new FadeAnimationRoute(builder: (context) => PlanInfoPage(plan: plan))
+                          FadeAnimationRoute(builder: (context) => PlanInfoPage(plan: plan))
                       );
                     },
-                    title: new RichText(
-                      text: new TextSpan(
+                    title: RichText(
+                      text: TextSpan(
                         text: plan.name,
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize,
                         ),
                       ),
                     ),
-                    subtitle: plan.description.isEmpty ? null : new RichText(
-                      text: new TextSpan(
+                    subtitle: plan.description.isEmpty ? null : RichText(
+                      text: TextSpan(
                         text: plan.description,
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize*0.8,
@@ -135,16 +123,16 @@ class PlanManager {
                       ),
                     ),
                   ),
-                  new Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       plan.days.isNotEmpty
                           ? plan.startingDate != null && DateTime.now().difference(plan.startingDate).inDays < plan.days.length
-                          ? new FlatButton(
-                          child: new Text('DAY ${DateTime.now().difference(plan.startingDate).inDays+1} OF ${plan.days.length}'),
+                          ? FlatButton(
+                          child: Text('DAY ${DateTime.now().difference(plan.startingDate).inDays+1} OF ${plan.days.length}'),
                           onPressed: () {
                             Navigator.of(context).push(
-                                new FadeAnimationRoute(
+                                FadeAnimationRoute(
                                     builder: (context) => PlanDaysPage(
                                         plan: plan,
                                         index: DateTime.now().difference(plan.startingDate).inDays
@@ -152,33 +140,33 @@ class PlanManager {
                                 )
                             );
                           }
-                      ) : new FlatButton(
-                        child: new Text('START'),
+                      ) : FlatButton(
+                        child: Text('START'),
                         onPressed: () {
                           plan.startPlan();
                           Navigator.of(context).push(
-                              new FadeAnimationRoute(builder: (context) => PlanDaysPage(plan: plan, index: 0))
+                              FadeAnimationRoute(builder: (context) => PlanDaysPage(plan: plan, index: 0))
                           );
                         },
-                      ) : new Container(),
-                      new Expanded(
-                        child: new Row(
+                      ) : Container(),
+                      Expanded(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            plan.canEdit ? new IconButton(
-                              icon: new Icon(Icons.edit),
+                            plan.canEdit ? IconButton(
+                              icon: Icon(Icons.edit),
                               onPressed: () {
                                 Navigator.of(context).push(
-                                    new FadeAnimationRoute(builder: (context) => PlanEditPage(plan: plan))
+                                    FadeAnimationRoute(builder: (context) => PlanEditPage(plan: plan))
                                 );
                               },
-                            ) : new Container(),
-                            user != null ? new IconButton(
-                              icon: new Icon(Icons.share),
+                            ) : Container(),
+                            user != null ? IconButton(
+                              icon: Icon(Icons.share),
                               onPressed: () {
                                 sharePlan(plan, context);
                               },
-                            ) : new Container(),
+                            ) : Container(),
                           ],
                         ),
                       )
@@ -188,7 +176,7 @@ class PlanManager {
               ),
             )
         ).toList(),
-      ) : new Container(
+      ) : Container(
       ),
     );
   }
@@ -200,9 +188,9 @@ class PlanManager {
       userRef.child('${user.uid}/$key').set(true);
 
       var value = plan.toJson();
-      value['users'] = new Map();
+      value['users'] = Map();
       value['users'][user.uid] = true;
-      value['e'] = new Map();
+      value['e'] = Map();
       value['e'][user.uid] = true;
 
       planRef.child(key).set(value);
@@ -219,11 +207,11 @@ class PlanManager {
       var value = (await planRef.child(key).once()).value;
       if(value != null) {
         if(value['users'] == null)
-          value['users'] = new Map();
+          value['users'] = Map();
         value['users'][user.uid] = true;
         if(edit) {
           if(value['e'] == null)
-            value['e'] = new Map();
+            value['e'] = Map();
           value['e'][user.uid] = true;
         }
 
@@ -284,11 +272,11 @@ class PlanManager {
 
     var tmpPlans = json.decode(contents)['plans'];
 
-    tmpPlans.forEach((plan) => addPlan(new Plan.fromJson(plan.keys.toList()[0], plan[plan.keys.toList()[0]], json.decode(contents)['progress'])));
+    tmpPlans.forEach((plan) => addPlan(Plan.fromJson(plan.keys.toList()[0], plan[plan.keys.toList()[0]], json.decode(contents)['progress'])));
   }
 
 
-  wipePlansFromFile() async {
+  deletePlansFromFile() async {
     final file = await getFile('plans.json');
 
     await file.delete();
@@ -361,7 +349,7 @@ class PlanManager {
         print('plans: $contents');
 
         plans.clear();
-        tmpPlans.forEach((plan) => plans.add(new Plan.fromJson(plan.keys.toList()[0], plan[plan.keys.toList()[0]], json.decode(contents)['progress'])));
+        tmpPlans.forEach((plan) => plans.add(Plan.fromJson(plan.keys.toList()[0], plan[plan.keys.toList()[0]], json.decode(contents)['progress'])));
 
 /*        var tmpProgress = json.decode(contents)['progress'];
 
@@ -410,7 +398,7 @@ class PlanManager {
 String randomString(int length) {
   const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-  Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
+  Random rnd = Random(DateTime.now().millisecondsSinceEpoch);
   String result = "";
   for (var i = 0; i < length; i++) {
     result += chars[rnd.nextInt(chars.length)];
@@ -428,28 +416,28 @@ class _SharePlanDialogState extends State<SharePlanDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return new SimpleDialog(
-      title: new Text(remoteConfig.getString('plan_edit_add')),
+    return SimpleDialog(
+      title: Text(remoteConfig.getString('plan_edit_add')),
       children: <Widget>[
-        new ListTile(
-          title: new RichText(
-            text: new TextSpan(
+        ListTile(
+          title: RichText(
+            text: TextSpan(
               text: 'Allow editing: ',
               style: Theme.of(context).textTheme.body1.copyWith(
                 fontSize: fontSize,
               ),
             ),
           ),
-          trailing: new Switch(
+          trailing: Switch(
             value: edit,
             onChanged: (value) => setState(() => edit = value),
           ),
         ),
-        new ListTile(
+        ListTile(
           //onTap: () => Navigator.pop(context, 1),
-          leading: new Icon(Icons.share),
-          title: new RichText(
-            text: new TextSpan(
+          leading: Icon(Icons.share),
+          title: RichText(
+            text: TextSpan(
               text: 'Share as a link (not supported)',
               style: Theme.of(context).textTheme.body1.copyWith(
                 fontSize: fontSize,
@@ -457,11 +445,11 @@ class _SharePlanDialogState extends State<SharePlanDialog> {
             ),
           ),
         ),
-        new ListTile(
+        ListTile(
           onTap: () => Navigator.pop(context, Tuple2(2, edit)),
-          leading: new Icon(Icons.add_photo_alternate),
-          title: new RichText(
-            text: new TextSpan(
+          leading: Icon(Icons.add_photo_alternate),
+          title: RichText(
+            text: TextSpan(
               text: 'Share as QR Code',
               style: Theme.of(context).textTheme.body1.copyWith(
                 fontSize: fontSize,

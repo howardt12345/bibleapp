@@ -33,12 +33,12 @@ import 'package:bible/ui/versions.dart';
 bool addButtonFAB = true;
 bool signInPrompt = false;
 
-PlanManager planManager = new PlanManager();
+PlanManager planManager = PlanManager();
 
 class PlanManagerPage extends StatefulWidget {
 
   @override
-  PlanManagerPageState createState() => new PlanManagerPageState();
+  PlanManagerPageState createState() => PlanManagerPageState();
 }
 class PlanManagerPageState extends State<PlanManagerPage> {
 
@@ -58,7 +58,7 @@ class PlanManagerPageState extends State<PlanManagerPage> {
           switch(action) {
             case DialogAction.confirm:
               Navigator.of(context).push(
-                  new FadeAnimationRoute(builder: (context) => LoginPage())
+                  FadeAnimationRoute(builder: (context) => LoginPage())
               ).then((onValue) {
                 setState(() {
                 });
@@ -83,32 +83,32 @@ class PlanManagerPageState extends State<PlanManagerPage> {
     fetchConfig();
 
     var appBar = PreferredSize(
-      child: new SafeArea(
-        child: new Container(
+      child: SafeArea(
+        child: Container(
           height: 56.0,
           alignment: Alignment.center,
-          child: new Row(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Container(
+              Container(
                 height: 56.0,
                 width: 56.0,
-                child: new IconButton(
-                    icon: new Icon(Icons.arrow_back),
+                child: IconButton(
+                    icon: Icon(Icons.arrow_back),
                     onPressed: () => Navigator.of(context).pop(),
                 ),
               ),
-              new Expanded(
-                child: new Container(),
+              Expanded(
+                child: Container(),
                 flex: 16,
               ),
-              new Expanded(
-                child: !addButtonFAB ? new IconButton(
-                  icon: new Icon(Icons.add),
+              Expanded(
+                child: !addButtonFAB ? IconButton(
+                  icon: Icon(Icons.add),
                   onPressed: () {
                     print('add');
                     Navigator.of(context).push(
-                        new FadeAnimationRoute(builder: (context) => PlanEditPage(add: true))
+                        FadeAnimationRoute(builder: (context) => PlanEditPage(add: true))
                     ).then((onValue) {
                       setState(() {
                         if(onValue != null)
@@ -117,27 +117,27 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                       });
                     });
                   },
-                ) : new Container(),
+                ) : Container(),
                 flex: 4,
               ),
               Container(
                 height: 56.0,
                 width: 56.0,
-                child: new IconButton(
-                  icon: new Icon(Icons.menu),
+                child: IconButton(
+                  icon: Icon(Icons.menu),
                   onPressed: () async {
                     print('menu');
                     FirebaseUser user = await FirebaseAuth.instance.currentUser();
                     if(user != null) {
                       Navigator.of(context).push(
-                          new FadeAnimationRoute(builder: (context) => ProfilePage())
+                          FadeAnimationRoute(builder: (context) => ProfilePage())
                       ).then((onValue) {
                         setState(() {
                         });
                       });
                     } else {
                       Navigator.of(context).push(
-                          new FadeAnimationRoute(builder: (context) => LoginPage())
+                          FadeAnimationRoute(builder: (context) => LoginPage())
                       ).then((onValue) {
                         setState(() {
                         });
@@ -150,23 +150,23 @@ class PlanManagerPageState extends State<PlanManagerPage> {
           ),
         ),
       ),
-      preferredSize: new Size.fromHeight(56.0),
+      preferredSize: Size.fromHeight(56.0),
     );
 
     return defaultVersion.isNotEmpty
-        ?  new Scaffold(
+        ?  Scaffold(
       body: OrientationBuilder(
-        builder: (context, orientation) => new SafeArea(
-          child: new Stack(
+        builder: (context, orientation) => SafeArea(
+          child: Stack(
             children: <Widget>[
-              new ListView(
+              ListView(
                 children: <Widget>[
-                  new Container(
+                  Container(
                     height: orientation == Orientation.portrait ? fontSize*8 : fontSize*4,
                     margin: EdgeInsets.only(top: orientation == Orientation.portrait ? fontSize*2 : fontSize),
-                    child: new Center(
-                      child: new RichText(
-                        text: new TextSpan(
+                    child: Center(
+                      child: RichText(
+                        text: TextSpan(
                           text: getString('title_plan'),
                           style: Theme.of(context).textTheme.body1.copyWith(
                             fontSize: fontSize*2,
@@ -176,22 +176,22 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                     ),
                     color: Theme.of(context).canvasColor,
                   ),
-                  new Container(
+                  Container(
                     child: planManager.getPlans(),
                   ),
-                  new Container(height: 56.0),
+                  Container(height: 56.0),
                 ],
               ),
-              appBarAtTop ? new Align(
+              appBarAtTop ? Align(
                 alignment: Alignment.topCenter,
-                child: new Stack(
+                child: Stack(
                   children: <Widget>[
-                    new IgnorePointer(
-                      child: new Align(
+                    IgnorePointer(
+                      child: Align(
                         alignment: Alignment.topCenter,
-                        child: new Container(
-                          decoration: new BoxDecoration(
-                            gradient: new LinearGradient(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Theme.of(context).canvasColor, Theme.of(context).canvasColor.withAlpha(0)],
@@ -202,22 +202,22 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                         ),
                       ),
                     ),
-                    new Align(
+                    Align(
                       alignment: Alignment.topLeft,
                       child: appBar,
                     ),
                   ],
                 ),
-              ) : new Align(
+              ) : Align(
                 alignment: Alignment.bottomCenter,
-                child: new Stack(
+                child: Stack(
                   children: <Widget>[
-                    new IgnorePointer(
-                      child: new Align(
+                    IgnorePointer(
+                      child: Align(
                         alignment: Alignment.bottomCenter,
-                        child: new Container(
-                          decoration: new BoxDecoration(
-                            gradient: new LinearGradient(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
@@ -228,7 +228,7 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                         ),
                       ),
                     ),
-                    new Align(
+                    Align(
                       alignment: Alignment.bottomCenter,
                       child: appBar,
                     ),
@@ -241,32 +241,32 @@ class PlanManagerPageState extends State<PlanManagerPage> {
       ),
       floatingActionButton: addButtonFAB ? FloatingActionButton.extended(
         icon: Icon(Icons.add),
-        label: new Text(getString('plan_add_plan')),
+        label: Text(getString('plan_add_plan')),
         onPressed: () {
           print('add');
           if(user != null) {
             showDialog<int>(
               context: context,
-              builder: (BuildContext context) => new SimpleDialog(
-                title: new Text(getString('plan_edit_add')),
+              builder: (BuildContext context) => SimpleDialog(
+                title: Text(getString('plan_edit_add')),
                 children: <Widget>[
-                  new ListTile(
+                  ListTile(
                     onTap: () => Navigator.pop(context, 1),
-                    leading: new Icon(Icons.add),
-                    title: new RichText(
-                      text: new TextSpan(
-                        text: 'Create a New Plan',
+                    leading: Icon(Icons.add),
+                    title: RichText(
+                      text: TextSpan(
+                        text: 'Create a Plan',
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize,
                         ),
                       ),
                     ),
                   ),
-                  new ListTile(
+                  ListTile(
                     onTap: () => Navigator.pop(context, 2),
-                    leading: new Icon(Icons.add_a_photo),
-                    title: new RichText(
-                      text: new TextSpan(
+                    leading: Icon(Icons.add_a_photo),
+                    title: RichText(
+                      text: TextSpan(
                         text: 'Add from QR Code',
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize,
@@ -310,20 +310,20 @@ class PlanManagerPageState extends State<PlanManagerPage> {
         heroTag: null,
       ) : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    ) : new Scaffold(
-      body: new SafeArea(
-        child: new Stack(
+    ) : Scaffold(
+      body: SafeArea(
+        child: Stack(
           children: <Widget>[
-            new Center(
-              child: new Column(
+            Center(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  new Container(
+                  Container(
                     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-                    child: new Center(
-                      child: new RichText(
+                    child: Center(
+                      child: RichText(
                         textAlign: TextAlign.center,
-                        text: new TextSpan(
+                        text: TextSpan(
                           text: getString('no_default_version_title'),
                           style: Theme.of(context).textTheme.body1.copyWith(
                             fontSize: fontSize*1.6,
@@ -332,12 +332,12 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                       ),
                     ),
                   ),
-                  new Container(
+                  Container(
                     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-                    child: new Center(
-                      child: new RichText(
+                    child: Center(
+                      child: RichText(
                         textAlign: TextAlign.center,
-                        text: new TextSpan(
+                        text: TextSpan(
                           text: '${getString('no_default_version_subtitle')}',
                           style: Theme.of(context).textTheme.body1.copyWith(
                             fontSize: fontSize,
@@ -347,26 +347,26 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                       ),
                     ),
                   ),
-                  new FlatButton(
+                  FlatButton(
                     onPressed: () {
                       Navigator.of(context).push(
-                        new FadeAnimationRoute(builder: (context) =>
+                        FadeAnimationRoute(builder: (context) =>
                           VersionsPage())
                       );
                     },
-                    child: new Text(
+                    child: Text(
                         getString('select_default_version')
                     ),
                   ),
-                  new Container(height: 56.0),
+                  Container(height: 56.0),
                 ],
               ),
             ),
-            new Align(
+            Align(
               alignment: Alignment.bottomCenter,
-              child: new Container(
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor
@@ -376,21 +376,21 @@ class PlanManagerPageState extends State<PlanManagerPage> {
                 ),
                 height: 56.0,
                 alignment: Alignment.bottomCenter,
-                child: new Row(
+                child: Row(
                   children: [
-                    new Expanded(
-                      child: new Container(
+                    Expanded(
+                      child: Container(
                         height: 56.0,
                         width: 56.0,
-                        child: new IconButton(
-                          icon: new Icon(Icons.arrow_back),
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back),
                           onPressed: () => Navigator.of(context).pop(),
                         ),
                       ),
                       flex: 2
                     ),
-                    new Expanded(
-                      child: new Opacity(opacity: 0.0),
+                    Expanded(
+                      child: Opacity(opacity: 0.0),
                       flex: 11,
                     )
                   ],
@@ -405,7 +405,7 @@ class PlanManagerPageState extends State<PlanManagerPage> {
 
   planEdit(BuildContext context) {
     Navigator.of(context).push(
-        new FadeAnimationRoute(builder: (context) => PlanEditPage(add: true))
+        FadeAnimationRoute(builder: (context) => PlanEditPage(add: true))
     ).then((onValue) {
       setState(() {
       });
@@ -448,7 +448,7 @@ class Plan {
     this.days,
     this.startingDate,
   }) {
-    this.days = this.days != null ? this.days : new List<Day>();
+    this.days = this.days != null ? this.days : List<Day>();
   }
 
   startPlan() {
@@ -479,7 +479,7 @@ class Plan {
     this.name = source.name,
     this.description = source.description,
     this.canEdit = source.canEdit,
-    this.days = new List.from(source.days),
+    this.days = List.from(source.days),
     this.startingDate = source.startingDate;
 
   Plan.fromJson(String key, Map<dynamic, dynamic> json, var progress) {
@@ -488,7 +488,7 @@ class Plan {
     description = json['d'];
     startingDate = DateTime.tryParse(json['sd']);
     List<dynamic> jsonDays = json['days'];
-    this.days = jsonDays != null ? jsonDays.map((e) => new Day.fromJson(key, e)).toList() : new List<Day>();
+    this.days = jsonDays != null ? jsonDays.map((e) => Day.fromJson(key, e)).toList() : List<Day>();
 
     this.canEdit = json['e'] != null ? json['e'].containsKey(user.uid) : true;
 
@@ -529,7 +529,7 @@ class Day {
   Day({
     this.passages,
   }) {
-    this.passages = this.passages != null ? this.passages : new List<PlanPassage>();
+    this.passages = this.passages != null ? this.passages : List<PlanPassage>();
   }
 
   toText() => passages.map(
@@ -549,12 +549,12 @@ class Day {
   firstIncomplete() => passages.indexOf(passages.firstWhere((passage) => !passage.completed));
   
   Day.clone(Day source) : 
-      this.passages = new List.from(source.passages);
+      this.passages = List.from(source.passages);
 
   Day.fromJson(String key, Map<dynamic, dynamic> json) {
     this.key = key;
     List<dynamic> jsonPassages = json['ps'];
-    passages = jsonPassages != null ? jsonPassages.map((p) => PlanPassage.fromJson(key, p)).toList() : new List<PlanPassage>();
+    passages = jsonPassages != null ? jsonPassages.map((p) => PlanPassage.fromJson(key, p)).toList() : List<PlanPassage>();
   }
 
   toJson({bool file = false}) {
@@ -589,8 +589,8 @@ class PlanPassage extends Passage {
 
   PlanPassage.fromJson(String key, Map<dynamic, dynamic> json) {
     this.key = key;
-    start = new Tuple3.fromList(json['s'].split(',').map((s) => int.parse(s)).toList());
-    end = new Tuple3.fromList(json['e'].split(',').map((s) => int.parse(s)).toList());
+    start = Tuple3.fromList(json['s'].split(',').map((s) => int.parse(s)).toList());
+    end = Tuple3.fromList(json['e'].split(',').map((s) => int.parse(s)).toList());
     completed = false;
   }
 
@@ -600,8 +600,8 @@ class PlanPassage extends Passage {
 
   PlanPassage.fromSnapshot(DataSnapshot snapshot) {
     key = snapshot.key;
-    start = new Tuple3.fromList(snapshot.value['s'].split(',').map((s) => int.parse(s)).toList());
-    end = new Tuple3.fromList(snapshot.value['e'].split(',').map((s) => int.parse(s)).toList());
+    start = Tuple3.fromList(snapshot.value['s'].split(',').map((s) => int.parse(s)).toList());
+    end = Tuple3.fromList(snapshot.value['e'].split(',').map((s) => int.parse(s)).toList());
   }
   @override
   toJson({bool file = false}) {
@@ -625,11 +625,11 @@ class Passage {
   });
 
   toText() {
-    PassageChecker checker = new PassageChecker(bible: bible);
+    PassageChecker checker = PassageChecker(bible: bible);
     Tuple3 startCorrected = checker.correctVerse(start), endCorrected = checker.correctVerse(end);
     String firstVerse = (startCorrected.item3 == 0
         && endCorrected.item3 == bible.books[bible.books.keys.toList()[endCorrected.item1]].chapters[endCorrected.item2].length()-1)
-        ? bible.chapterAsText(new Tuple2(start.item1, start.item2))
+        ? bible.chapterAsText(Tuple2(start.item1, start.item2))
         : bible.verseAsText(start);
     String lastVerse = endCorrected.item2 == startCorrected.item2
         && (endCorrected.item3 == startCorrected.item3
@@ -647,12 +647,12 @@ class Passage {
 
   }
   Passage.clone(Passage source) :
-    this.start = new Tuple3(source.start.item1, source.start.item2, source.start.item3),
-    this.end = new Tuple3(source.end.item1, source.end.item2, source.end.item3);
+    this.start = Tuple3(source.start.item1, source.start.item2, source.start.item3),
+    this.end = Tuple3(source.end.item1, source.end.item2, source.end.item3);
 
   toJson() {
     return {
-      '"${new Uuid().v1()}"' : {
+      '"${Uuid().v1()}"' : {
         '"s"': "${start.toList().join(",")}",
         '"e"': "${start.toList().join(",")}",
       }

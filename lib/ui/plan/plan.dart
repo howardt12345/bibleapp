@@ -27,7 +27,7 @@ class PlanInfoPage extends StatefulWidget {
   );
 
   @override
-  _PlanInfoPageState createState() => new _PlanInfoPageState();
+  _PlanInfoPageState createState() => _PlanInfoPageState();
 }
 class _PlanInfoPageState extends State<PlanInfoPage> {
 
@@ -40,29 +40,29 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
   @override
   Widget build(BuildContext context) {
     var appBar = PreferredSize(
-      child: new SafeArea(
-        child: new Container(
+      child: SafeArea(
+        child: Container(
           height: 56.0,
           alignment: Alignment.center,
-          child: new Row(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Container(
-                child: new IconButton(
-                  icon: new Icon(Icons.arrow_back),
+              Container(
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
                 margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
-              new Expanded(
-                child: new Container(),
+              Expanded(
+                child: Container(),
               ),
               user != null ? Container(
-                child: new IconButton(
-                  icon: new Icon(Icons.menu),
+                child: IconButton(
+                  icon: Icon(Icons.menu),
                   onPressed: () {
                     Navigator.of(context).push(
-                        new FadeAnimationRoute(builder: (context) => ProgressPage(widget.plan))
+                        FadeAnimationRoute(builder: (context) => ProgressPage(widget.plan))
                     ).then((onValue) {
                       setState(() {
                       });
@@ -70,33 +70,33 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                   },
                 ),
                 margin: EdgeInsets.symmetric(horizontal: 4.0),
-              ) : new Container(),
+              ) : Container(),
             ],
           ),
         ),
       ),
-      preferredSize: new Size.fromHeight(56.0),
+      preferredSize: Size.fromHeight(56.0),
     );
 
-    return new OrientationBuilder(
-      builder: (context, orientation) => new Scaffold(
-        body: new SafeArea(
-          child: new Stack(
+    return OrientationBuilder(
+      builder: (context, orientation) => Scaffold(
+        body: SafeArea(
+          child: Stack(
             children: <Widget>[
-              new ListView(
+              ListView(
                 children: <Widget>[
-                  new Container(
+                  Container(
                     margin: EdgeInsets.only(
                       top: orientation == Orientation.portrait ? fontSize*4 : fontSize*2,
                       left: 16.0,
                       right: 16.0,
                       bottom: 8.0,
                     ),
-                    child: new Container(
+                    child: Container(
                       alignment: Alignment.bottomCenter,
-                      child: new RichText(
+                      child: RichText(
                         textDirection: TextDirection.ltr,
-                        text: new TextSpan(
+                        text: TextSpan(
                           text: widget.plan.name,
                           style: Theme.of(context).textTheme.body1.copyWith(
                             fontSize: fontSize*2,
@@ -105,16 +105,16 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                       ),
                     ),
                   ),
-                  new Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       widget.plan.days.isNotEmpty
                           ? widget.plan.startingDate != null && DateTime.now().difference(widget.plan.startingDate).inDays < widget.plan.days.length
-                            ? new FlatButton(
-                                child: new Text('DAY ${DateTime.now().difference(widget.plan.startingDate).inDays+1} OF ${widget.plan.days.length}'),
+                            ? FlatButton(
+                                child: Text('DAY ${DateTime.now().difference(widget.plan.startingDate).inDays+1} OF ${widget.plan.days.length}'),
                                 onPressed: () {
                                   Navigator.of(context).push(
-                                      new FadeAnimationRoute(
+                                      FadeAnimationRoute(
                                           builder: (context) => PlanDaysPage(
                                             plan: widget.plan,
                                             index: DateTime.now().difference(widget.plan.startingDate).inDays
@@ -122,40 +122,40 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                                       )
                                   ).then((onValue) => setState(() {}));
                                 }
-                            ) : new FlatButton(
-                              child: new Text('START'),
+                            ) : FlatButton(
+                              child: Text('START'),
                               onPressed: () {
                                 widget.plan.startPlan();
                                 Navigator.of(context).push(
-                                    new FadeAnimationRoute(builder: (context) => PlanDaysPage(plan: widget.plan, index: 0))
+                                    FadeAnimationRoute(builder: (context) => PlanDaysPage(plan: widget.plan, index: 0))
                                 ).then((onValue) => setState(() {}));
                               },
-                      ) : new Container(),
-                      new Expanded(
-                        child: new Row(
+                      ) : Container(),
+                      Expanded(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: <Widget>[
-                            widget.plan.canEdit ? new IconButton(
-                              icon: new Icon(Icons.edit),
+                            widget.plan.canEdit ? IconButton(
+                              icon: Icon(Icons.edit),
                               onPressed: () => Navigator.of(context).push(
-                                  new FadeAnimationRoute(builder: (context) => PlanEditPage(plan: widget.plan))
+                                  FadeAnimationRoute(builder: (context) => PlanEditPage(plan: widget.plan))
                               ).then((onValue) => setState(() {})),
-                            ) : new Container(),
-                            new IconButton(
-                              icon: new Icon(Icons.delete),
+                            ) : Container(),
+                            IconButton(
+                              icon: Icon(Icons.delete),
                               onPressed: () => showDialog<DialogAction>(
                                   context: context,
-                                  builder: (context) => new AlertDialog(
-                                    title: new Text('Delete ${widget.plan.name}?'),
-                                    content: new Text('Are you sure you want to delete ${widget.plan.name}?'
+                                  builder: (context) => AlertDialog(
+                                    title: Text('Delete ${widget.plan.name}?'),
+                                    content: Text('Are you sure you want to delete ${widget.plan.name}?'
                                         '\n'),
                                     actions: <Widget>[
-                                      new FlatButton(
-                                        child: new Text('CANCEL'),
+                                      FlatButton(
+                                        child: Text('CANCEL'),
                                         onPressed: () => Navigator.pop(context, DialogAction.cancel),
                                       ),
-                                      new FlatButton(
-                                        child: new Text('OK'),
+                                      FlatButton(
+                                        child: Text('OK'),
                                         onPressed: () => Navigator.pop(context, DialogAction.confirm),
                                       ),
                                     ],
@@ -173,38 +173,38 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                                 }
                               }),
                             ),
-                            user != null ? new IconButton(
-                              icon: new Icon(Icons.share),
+                            user != null ? IconButton(
+                              icon: Icon(Icons.share),
                               onPressed: () => planManager.sharePlan(widget.plan, context),
-                            ) : new Container(),
+                            ) : Container(),
                           ],
                         ),
                       )
                     ],
                   ),
-                  new Container(
+                  Container(
                     margin: EdgeInsets.symmetric(
                       vertical: widget.plan.description.isNotEmpty ? 8.0 : 0.0,
                       horizontal: 16.0,
                     ),
-                    child: widget.plan.description.isNotEmpty ? new RichText(
+                    child: widget.plan.description.isNotEmpty ? RichText(
                       textDirection: TextDirection.ltr,
-                      text: new TextSpan(
+                      text: TextSpan(
                         text: widget.plan.description,
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize,
                         ),
                       ),
-                    ) : new Container(),
+                    ) : Container(),
                   ),
-                  new Container(
+                  Container(
                     margin: EdgeInsets.only(
                       top: 8.0,
                       left: 16.0,
                       right: 16.0,
                     ),
-                    child: new RichText(
-                      text: new TextSpan(
+                    child: RichText(
+                      text: TextSpan(
                         text: getString('plan_edit_days'),
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize*1.25,
@@ -212,16 +212,16 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                       ),
                     ),
                   ),
-                  widget.plan.days != null ? new Container(
+                  widget.plan.days != null ? Container(
                     margin: EdgeInsets.only(
                       top: 8.0,
                     ),
-                    child: new Column(
+                    child: Column(
                       children: widget.plan.days.map(
-                            (day) => new ListTile(
+                            (day) => ListTile(
                           contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                           onTap: () => Navigator.of(context).push(
-                              new FadeAnimationRoute(builder: (context) => PlanDaysPage(
+                              FadeAnimationRoute(builder: (context) => PlanDaysPage(
                                 plan: widget.plan,
                                 index: widget.plan.days.indexOf(day),
                               ))
@@ -231,20 +231,20 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                               : widget.plan.startingDate != null && DateTime.now().difference(widget.plan.startingDate).inDays > widget.plan.days.indexOf(day)
                               ? Icon(Icons.priority_high)
                               : null,
-                          title: new RichText(
-                            text: new TextSpan(
+                          title: RichText(
+                            text: TextSpan(
                               text: 'Day ${widget.plan.days.indexOf(day)+1}',
                               style: Theme.of(context).textTheme.body1.copyWith(
                                   fontSize: fontSize,
                                   color: widget.plan.startingDate != null
-                                      && new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).difference(widget.plan.startingDate).inDays == widget.plan.days.indexOf(day)
+                                      && DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).difference(widget.plan.startingDate).inDays == widget.plan.days.indexOf(day)
                                       ? Theme.of(context).accentColor
                                       : Theme.of(context).textTheme.body1.color
                               ),
                             ),
                           ),
-                          subtitle: new RichText(
-                            text: new TextSpan(
+                          subtitle: RichText(
+                            text: TextSpan(
                               text: day.toText(),
                               style: Theme.of(context).textTheme.body1.copyWith(
                                 fontSize: fontSize*0.8,
@@ -255,20 +255,20 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                         )
                       ).toList(),
                     ),
-                  ) : new Container(),
-                  new Container(height: 84.0),
+                  ) : Container(),
+                  Container(height: 84.0),
                 ],
               ),
-              appBarAtTop ? new Align(
+              appBarAtTop ? Align(
                 alignment: Alignment.topCenter,
-                child: new Stack(
+                child: Stack(
                   children: <Widget>[
-                    new IgnorePointer(
-                      child: new Align(
+                    IgnorePointer(
+                      child: Align(
                         alignment: Alignment.topCenter,
-                        child: new Container(
-                          decoration: new BoxDecoration(
-                            gradient: new LinearGradient(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Theme.of(context).canvasColor, Theme.of(context).canvasColor.withAlpha(0)],
@@ -279,22 +279,22 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                         ),
                       ),
                     ),
-                    new Align(
+                    Align(
                       alignment: Alignment.topLeft,
                       child: appBar,
                     ),
                   ],
                 ),
-              ) : new Align(
+              ) : Align(
                 alignment: Alignment.bottomCenter,
-                child: new Stack(
+                child: Stack(
                   children: <Widget>[
-                    new IgnorePointer(
-                      child: new Align(
+                    IgnorePointer(
+                      child: Align(
                         alignment: Alignment.bottomCenter,
-                        child: new Container(
-                          decoration: new BoxDecoration(
-                            gradient: new LinearGradient(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
@@ -305,7 +305,7 @@ class _PlanInfoPageState extends State<PlanInfoPage> {
                         ),
                       ),
                     ),
-                    new Align(
+                    Align(
                       alignment: Alignment.bottomCenter,
                       child: appBar,
                     ),
@@ -332,7 +332,7 @@ class PlanEditPage extends StatefulWidget {
   );
 
   @override
-  _PlanEditPageState createState() => new _PlanEditPageState();
+  _PlanEditPageState createState() => _PlanEditPageState();
 }
 class _PlanEditPageState extends State<PlanEditPage> {
   TextEditingController titleController,
@@ -345,9 +345,9 @@ class _PlanEditPageState extends State<PlanEditPage> {
   @override
   void initState() {
     super.initState();
-    tmpPlan = widget.plan != null && !widget.add ? new Plan.clone(widget.plan) : new Plan(canEdit: true);
-    titleController = new TextEditingController(text: tmpPlan.name);
-    descriptionController = new TextEditingController(text: tmpPlan.description);
+    tmpPlan = widget.plan != null && !widget.add ? Plan.clone(widget.plan) : Plan(canEdit: true);
+    titleController = TextEditingController(text: tmpPlan.name);
+    descriptionController = TextEditingController(text: tmpPlan.description);
     schedule = tmpPlan.startingDate != null;
   }
 
@@ -368,25 +368,25 @@ class _PlanEditPageState extends State<PlanEditPage> {
   @override
   Widget build(BuildContext context) {
     var appBar = PreferredSize(
-      child: new SafeArea(
-        child: new Container(
+      child: SafeArea(
+        child: Container(
           height: 56.0,
           alignment: Alignment.center,
-          child: new Row(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Container(
-                child: new IconButton(
-                  icon: new Icon(Icons.clear),
+              Container(
+                child: IconButton(
+                  icon: Icon(Icons.clear),
                   onPressed: () {
                     Navigator.pop(context, null);
                   },
                 ),
                 margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
-              new Expanded(
-                child: new IconButton(
-                  icon: new Icon(Icons.refresh),
+              Expanded(
+                child: IconButton(
+                  icon: Icon(Icons.refresh),
                   onPressed: () {
                     try {
                       setState(() => tmpPlan.applyEdit(
@@ -396,31 +396,31 @@ class _PlanEditPageState extends State<PlanEditPage> {
                         startingDate: widget.plan.startingDate,
                       ));
                     } catch(e) {
-                      setState(() => tmpPlan = new Plan(canEdit: true));
+                      setState(() => tmpPlan = Plan(canEdit: true));
                     }
                   },
                 ),
                 flex: 1,
               ),
-              new Expanded(
-                child: new Container(),
+              Expanded(
+                child: Container(),
                 flex: 3,
               ),
-              new Expanded(
-                child: !addButtonFAB ? new IconButton(
-                  icon: new Icon(Icons.add),
+              Expanded(
+                child: !addButtonFAB ? IconButton(
+                  icon: Icon(Icons.add),
                   onPressed: () => Navigator.of(context).push(
-                      new FadeAnimationRoute(builder: (context) => DayEditPage(add: true))
+                      FadeAnimationRoute(builder: (context) => DayEditPage(add: true))
                   ).then((onValue) => setState(() {
                     if(onValue != null)
                       tmpPlan.days.add(onValue);
                   })),
-                ) : new Container(),
+                ) : Container(),
                 flex: 1,
               ),
-              new Container(
-                child: new IconButton(
-                  icon: new Icon(Icons.check),
+              Container(
+                child: IconButton(
+                  icon: Icon(Icons.check),
                   onPressed: () {
                     try {
                       widget.plan.applyEdit(
@@ -444,21 +444,21 @@ class _PlanEditPageState extends State<PlanEditPage> {
           ),
         ),
     ),
-      preferredSize: new Size.fromHeight(56.0),
+      preferredSize: Size.fromHeight(56.0),
     );
 
-    return new OrientationBuilder(
-      builder: (context, orientation) => new Scaffold(
-        body: new SafeArea(
-          child: new Stack(
+    return OrientationBuilder(
+      builder: (context, orientation) => Scaffold(
+        body: SafeArea(
+          child: Stack(
             children: <Widget>[
-              new ListView(
+              ListView(
                 children: <Widget>[
-                  new Container(
+                  Container(
                     margin: EdgeInsets.only(top: orientation == Orientation.portrait ? fontSize*2 : fontSize),
-                    child: new Center(
-                      child: new RichText(
-                        text: new TextSpan(
+                    child: Center(
+                      child: RichText(
+                        text: TextSpan(
                           text: widget.add ? getString('plan_edit_add') : '',
                           style: Theme.of(context).textTheme.body1.copyWith(
                             fontSize: fontSize*2,
@@ -468,19 +468,19 @@ class _PlanEditPageState extends State<PlanEditPage> {
                     ),
                     color: Theme.of(context).canvasColor,
                   ),
-                  new Container(
+                  Container(
                     margin: EdgeInsets.only(
                       left: 16.0,
                       right: 16.0,
                     ),
-                    child: new Container(
+                    child: Container(
                         alignment: Alignment.bottomCenter,
                         child: TextFormField(
                           controller: titleController,
                           style: Theme.of(context).textTheme.body1.copyWith(
                             fontSize: fontSize*2,
                           ),
-                          decoration: new InputDecoration(
+                          decoration: InputDecoration(
                               hintText: getString('plan_edit_enter_name'),
                               border: InputBorder.none
                           ),
@@ -494,17 +494,17 @@ class _PlanEditPageState extends State<PlanEditPage> {
                         )
                     ),
                   ),
-                  new Container(
+                  Container(
                     margin: EdgeInsets.symmetric(
                       horizontal: 16.0,
                     ),
-                    child: new Container(
+                    child: Container(
                       child: TextFormField(
                         controller: descriptionController,
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize,
                         ),
-                        decoration: new InputDecoration(
+                        decoration: InputDecoration(
                             hintText: getString('plan_edit_enter_description'),
                             border: InputBorder.none
                         ),
@@ -512,20 +512,20 @@ class _PlanEditPageState extends State<PlanEditPage> {
                       ),
                     ),
                   ),
-                  new Container(
+                  Container(
                     margin: EdgeInsets.symmetric(
                       horizontal: 16.0,
                     ),
-                    child: new Column(
+                    child: Column(
                       children: <Widget>[
-                        new Row(
+                        Row(
                           children: [
-                            new Expanded(
-                              child: schedule ? new DateItem(
+                            Expanded(
+                              child: schedule ? DateItem(
                                 dateTime: tmpPlan.startingDate,
                                 onChanged: (dateTime) => setState(() => tmpPlan.startingDate = dateTime),
-                              ) : new RichText(
-                                text: new TextSpan(
+                              ) : RichText(
+                                text: TextSpan(
                                   text: 'Schedule Plan:',
                                   style: Theme.of(context).textTheme.body1.copyWith(
                                     fontSize: fontSize,
@@ -533,7 +533,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
                                 ),
                               ),
                             ),
-                            new Switch(value: schedule, onChanged: (value) {
+                            Switch(value: schedule, onChanged: (value) {
                               setState(() {
                                 schedule = value;
                                 if(schedule == true && tmpPlan.startingDate == null)
@@ -542,11 +542,11 @@ class _PlanEditPageState extends State<PlanEditPage> {
                             })
                           ],
                         ),
-                        /*new Row(
+                        /*Row(
                           children: [
-                            new Expanded(
-                              child: new RichText(
-                                text: new TextSpan(
+                            Expanded(
+                              child: RichText(
+                                text: TextSpan(
                                   text: 'Show Progress:',
                                   style: Theme.of(context).textTheme.body1.copyWith(
                                     fontSize: fontSize,
@@ -554,20 +554,20 @@ class _PlanEditPageState extends State<PlanEditPage> {
                                 ),
                               ),
                             ),
-                            new Switch(value: progress, onChanged: (value) => setState(() => progress = value))
+                            Switch(value: progress, onChanged: (value) => setState(() => progress = value))
                           ],
                         ),*/
                       ],
                     )
                   ),
-                  new Container(
+                  Container(
                     margin: EdgeInsets.only(
                       top: 8.0,
                       left: 16.0,
                       right: 16.0,
                     ),
-                    child: new RichText(
-                      text: new TextSpan(
+                    child: RichText(
+                      text: TextSpan(
                         text: getString('plan_edit_days'),
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize*1.25,
@@ -575,32 +575,32 @@ class _PlanEditPageState extends State<PlanEditPage> {
                       ),
                     ),
                   ),
-                  tmpPlan.days != null && tmpPlan.days.isNotEmpty ? new Container(
+                  tmpPlan.days != null && tmpPlan.days.isNotEmpty ? Container(
                     margin: EdgeInsets.only(
                       top: 8.0,
                     ),
-                    child: new Column(
+                    child: Column(
                       children: tmpPlan.days.map(
-                        (day) => new ListTile(
+                        (day) => ListTile(
                           contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                           onTap: () => Navigator.of(context).push(
-                              new FadeAnimationRoute(builder: (context) => DayEditPage(day: day))
+                              FadeAnimationRoute(builder: (context) => DayEditPage(day: day))
                           ).then((onValue) => setState(() {})),
                           trailing: IconButton(
                             icon: Icon(Icons.clear),
                             onPressed: () => showDialog<DialogAction>(
                                 context: context,
-                                builder: (context) => new AlertDialog(
-                                  title: new Text('Delete Day ${tmpPlan.days.indexOf(day)+1}?'),
-                                  content: new Text('Are you sure you want to delete Day ${tmpPlan.days.indexOf(day)+1}?'
+                                builder: (context) => AlertDialog(
+                                  title: Text('Delete Day ${tmpPlan.days.indexOf(day)+1}?'),
+                                  content: Text('Are you sure you want to delete Day ${tmpPlan.days.indexOf(day)+1}?'
                                       '\nThis will delete ${day.toText()} from this plan.'),
                                   actions: <Widget>[
-                                    new FlatButton(
-                                      child: new Text('CANCEL'),
+                                    FlatButton(
+                                      child: Text('CANCEL'),
                                       onPressed: () => Navigator.pop(context, DialogAction.cancel),
                                     ),
-                                    new FlatButton(
-                                      child: new Text('OK'),
+                                    FlatButton(
+                                      child: Text('OK'),
                                       onPressed: () => Navigator.pop(context, DialogAction.confirm),
                                     ),
                                   ],
@@ -617,20 +617,20 @@ class _PlanEditPageState extends State<PlanEditPage> {
                               }
                             }),
                           ),
-                          title: new RichText(
-                            text: new TextSpan(
+                          title: RichText(
+                            text: TextSpan(
                               text: 'Day ${tmpPlan.days.indexOf(day)+1}',
                               style: Theme.of(context).textTheme.body1.copyWith(
                                   fontSize: fontSize,
                                   color: tmpPlan.startingDate != null
-                                      && new DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).difference(tmpPlan.startingDate).inDays == tmpPlan.days.indexOf(day)
+                                      && DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day).difference(tmpPlan.startingDate).inDays == tmpPlan.days.indexOf(day)
                                       ? Theme.of(context).accentColor
                                       : Theme.of(context).textTheme.body1.color
                               ),
                             ),
                           ),
-                          subtitle: new RichText(
-                            text: new TextSpan(
+                          subtitle: RichText(
+                            text: TextSpan(
                               text: day.toText(),
                               style: Theme.of(context).textTheme.body1.copyWith(
                                 fontSize: fontSize*0.8,
@@ -641,21 +641,21 @@ class _PlanEditPageState extends State<PlanEditPage> {
                         )
                       ).toList(),
                     ),
-                  ) : new Container(
+                  ) : Container(
                   ),
-                  new Container(height: 84.0),
+                  Container(height: 84.0),
                 ],
               ),
-              appBarAtTop ? new Align(
+              appBarAtTop ? Align(
                 alignment: Alignment.topCenter,
-                child: new Stack(
+                child: Stack(
                   children: <Widget>[
-                    new IgnorePointer(
-                      child: new Align(
+                    IgnorePointer(
+                      child: Align(
                         alignment: Alignment.topCenter,
-                        child: new Container(
-                          decoration: new BoxDecoration(
-                            gradient: new LinearGradient(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Theme.of(context).canvasColor, Theme.of(context).canvasColor.withAlpha(0)],
@@ -666,22 +666,22 @@ class _PlanEditPageState extends State<PlanEditPage> {
                         ),
                       ),
                     ),
-                    new Align(
+                    Align(
                       alignment: Alignment.topLeft,
                       child: appBar,
                     ),
                   ],
                 ),
-              ) : new Align(
+              ) : Align(
                 alignment: Alignment.bottomCenter,
-                child: new Stack(
+                child: Stack(
                   children: <Widget>[
-                    new IgnorePointer(
-                      child: new Align(
+                    IgnorePointer(
+                      child: Align(
                         alignment: Alignment.bottomCenter,
-                        child: new Container(
-                          decoration: new BoxDecoration(
-                            gradient: new LinearGradient(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
@@ -692,7 +692,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
                         ),
                       ),
                     ),
-                    new Align(
+                    Align(
                       alignment: Alignment.bottomCenter,
                       child: appBar,
                     ),
@@ -706,7 +706,7 @@ class _PlanEditPageState extends State<PlanEditPage> {
           icon: Icon(Icons.add),
           label: Text(getString('plan_add_day')),
           onPressed: () => Navigator.of(context).push(
-              new FadeAnimationRoute(builder: (context) => DayEditPage(add: true))
+              FadeAnimationRoute(builder: (context) => DayEditPage(add: true))
           ).then((onValue) => setState(() {
             if(onValue != null)
               tmpPlan.days.add(onValue);
@@ -723,8 +723,8 @@ class DateItem extends StatelessWidget {
   DateItem({Key key, DateTime dateTime, @required this.onChanged})
       : assert(onChanged != null),
         date = dateTime == null
-            ? new DateTime.now()
-            : new DateTime(dateTime.year, dateTime.month, dateTime.day),
+            ? DateTime.now()
+            : DateTime(dateTime.year, dateTime.month, dateTime.day),
         super(key: key);
 
   final DateTime date;
@@ -732,13 +732,13 @@ class DateItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return new InkWell(
+    return InkWell(
       onTap: (() => _showDatePicker(context)),
-      child: new Padding(
-          padding: new EdgeInsets.symmetric(vertical: 8.0),
-          child: new RichText(
-            text: new TextSpan(
-              text: new intl.DateFormat('EEEE, MMMM d').format(date),
+      child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: RichText(
+            text: TextSpan(
+              text: intl.DateFormat('EEEE, MMMM d').format(date),
               style: Theme.of(context).textTheme.body1.copyWith(
                 fontSize: fontSize,
               ),
@@ -756,7 +756,7 @@ class DateItem extends StatelessWidget {
         lastDate: date.add(const Duration(days: 20000)));
 
     if (dateTimePicked != null) {
-      onChanged(new DateTime(dateTimePicked.year, dateTimePicked.month,
+      onChanged(DateTime(dateTimePicked.year, dateTimePicked.month,
           dateTimePicked.day));
     }
   }

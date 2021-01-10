@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart' hide ExpansionPanel, ExpansionPanelList, ExpansionPanelHeaderBuilder;
+import 'package:flutter/material.dart' hide ExpansionPanel, ExpansionPanelList, ExpansionPanelHeaderBuilder, Page;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 
@@ -70,19 +70,19 @@ bool verseNumbers = true;
 MaterialColor primarySwatch = Colors.blue;
 
 List<ThemeData> themeList = [
-  new ThemeData(
+  ThemeData(
     primarySwatch: primarySwatch,
     primaryColor: Colors.white,
     fontFamily: defaultFont,
     brightness: Brightness.light,
     sliderTheme: ThemeData.light().sliderTheme,
   ),
-  new ThemeData(
+  ThemeData(
     primarySwatch: primarySwatch,
     fontFamily: defaultFont,
     brightness: Brightness.dark,
   ),
-  new ThemeData(
+  ThemeData(
     primarySwatch: primarySwatch,
     fontFamily: defaultFont,
     brightness: Brightness.dark,
@@ -132,10 +132,10 @@ saveFontSpacing(double value) async {
 }
 
 class SettingsPage extends StatefulWidget {
-  static _SettingsPageState of(BuildContext context) => context.ancestorStateOfType(new TypeMatcher<_SettingsPageState>());
+  static _SettingsPageState of(BuildContext context) => context.ancestorStateOfType(TypeMatcher<_SettingsPageState>());
 
   @override
-  _SettingsPageState createState() => new _SettingsPageState();
+  _SettingsPageState createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
@@ -165,7 +165,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
 
     _lookAndFeelSettings = <SettingsItem<dynamic>>[
-      new SettingsItem<AppTheme>(
+      SettingsItem<AppTheme>(
           name: getString('settings_theme'),
           value: AppTheme.values[themeList.indexOf(App.of(context).themeData.copyWith(textTheme: App.of(context).themeData.textTheme.apply(fontFamily: defaultFont)))],
           hint: getString('settings_theme_hint'),
@@ -176,15 +176,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 item.isExpanded = false;
               });
             }
-            return new Form(
-                child: new Builder(
+            return Form(
+                child: Builder(
                     builder: (BuildContext context) {
-                      return new CollapsibleBody(
+                      return CollapsibleBody(
                         cancel: getString('settings_cancel'),
                         save: getString('settings_save'),
                         onSave: () { Form.of(context).save(); close(); },
                         onCancel: () { Form.of(context).reset(); close(); },
-                        child: new FormField<AppTheme>(
+                        child: FormField<AppTheme>(
                             initialValue: AppTheme.values[themeList.indexOf(App.of(context).themeData.copyWith(textTheme: App.of(context).themeData.textTheme.apply(fontFamily: defaultFont)))],
                             onSaved: (AppTheme result) {
                               logEvent('change_setting', {'setting': getString('settings_theme'), 'value': result.toString()});
@@ -193,18 +193,18 @@ class _SettingsPageState extends State<SettingsPage> {
                               saveTheme(result.index);
                             },
                             builder: (FormFieldState<AppTheme> field) {
-                              return new Column(
+                              return Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: AppTheme.values.map((AppTheme a) => new Row(
+                                children: AppTheme.values.map((AppTheme a) => Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
-                                      new Radio<AppTheme>(
+                                      Radio<AppTheme>(
                                         value: a,
                                         groupValue: field.value,
                                         onChanged: field.didChange,
                                       ),
-                                      new Text(capitalize(a.toString().split('.')[1].replaceAll('_', ' ')))
+                                      Text(capitalize(a.toString().split('.')[1].replaceAll('_', ' ')))
                                     ]
                                 )
                                 ).toList(),
@@ -217,7 +217,7 @@ class _SettingsPageState extends State<SettingsPage> {
             );
           }
       ),
-      new SettingsItem<AnimationSpeed>(
+      SettingsItem<AnimationSpeed>(
           name: getString('settings_animationSpeed'),
           value: _getSpeed(timeDilation),
           hint: getString('settings_animationSpeed_hint'),
@@ -228,15 +228,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 item.isExpanded = false;
               });
             }
-            return new Form(
-                child: new Builder(
+            return Form(
+                child: Builder(
                     builder: (BuildContext context) {
-                      return new CollapsibleBody(
+                      return CollapsibleBody(
                         cancel: getString('settings_cancel'),
                         save: getString('settings_save'),
                         onSave: () { Form.of(context).save(); close(); },
                         onCancel: () { Form.of(context).reset(); close(); },
-                        child: new FormField<AnimationSpeed>(
+                        child: FormField<AnimationSpeed>(
                             initialValue: _getSpeed(timeDilation),
                             onSaved: (AnimationSpeed result) {
                               logEvent('change_setting', {'setting': getString('settings_animationSpeed'), 'value': result.toString()});
@@ -266,18 +266,18 @@ class _SettingsPageState extends State<SettingsPage> {
                               }
                             },
                             builder: (FormFieldState<AnimationSpeed> field) {
-                              return new Column(
+                              return Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: AnimationSpeed.values.map((AnimationSpeed a) => new Row(
+                                children: AnimationSpeed.values.map((AnimationSpeed a) => Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
-                                      new Radio<AnimationSpeed>(
+                                      Radio<AnimationSpeed>(
                                         value: a,
                                         groupValue: field.value,
                                         onChanged: field.didChange,
                                       ),
-                                      new Text(capitalize(a.toString().split('.')[1].replaceAll('_', ' ')))
+                                      Text(capitalize(a.toString().split('.')[1].replaceAll('_', ' ')))
                                     ]
                                 )
                                 ).toList(),
@@ -290,7 +290,7 @@ class _SettingsPageState extends State<SettingsPage> {
             );
           }
       ),
-      new SettingsItem<AppBarLocation>(
+      SettingsItem<AppBarLocation>(
           name: getString('settings_appbar'),
           value: appBarAtTop ? AppBarLocation.top : AppBarLocation.bottom,
           hint: getString('settings_appbar_hint'),
@@ -301,15 +301,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 item.isExpanded = false;
               });
             }
-            return new Form(
-                child: new Builder(
+            return Form(
+                child: Builder(
                     builder: (BuildContext context) {
-                      return new CollapsibleBody(
+                      return CollapsibleBody(
                         cancel: getString('settings_cancel'),
                         save: getString('settings_save'),
                         onSave: () { Form.of(context).save(); close(); },
                         onCancel: () { Form.of(context).reset(); close(); },
-                        child: new FormField<AppBarLocation>(
+                        child: FormField<AppBarLocation>(
                             initialValue: appBarAtTop ? AppBarLocation.top : AppBarLocation.bottom,
                             onSaved: (AppBarLocation result) {
                               item.value = result;
@@ -318,18 +318,18 @@ class _SettingsPageState extends State<SettingsPage> {
                               saveAppBarLocation(result.index);
                             },
                             builder: (FormFieldState<AppBarLocation> field) {
-                              return new Column(
+                              return Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: AppBarLocation.values.map((AppBarLocation a) => new Row(
+                                children: AppBarLocation.values.map((AppBarLocation a) => Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
-                                      new Radio<AppBarLocation>(
+                                      Radio<AppBarLocation>(
                                         value: a,
                                         groupValue: field.value,
                                         onChanged: field.didChange,
                                       ),
-                                      new Text(capitalize(a.toString().split('.')[1].replaceAll('_', ' ')))
+                                      Text(capitalize(a.toString().split('.')[1].replaceAll('_', ' ')))
                                     ]
                                 )
                                 ).toList(),
@@ -344,7 +344,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     ];
     _fontSettings = <SettingsItem<dynamic>>[
-      new SettingsItem<FontEnum>(
+      SettingsItem<FontEnum>(
           name: getString('settings_font'),
           value: FontEnum.values.firstWhere((a) => capitalize(a.toString().split('.')[1].replaceAll('_', '')) == fontFamily),
           hint: getString('settings_font_hint'),
@@ -355,15 +355,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 item.isExpanded = false;
               });
             }
-            return new Form(
-                child: new Builder(
+            return Form(
+                child: Builder(
                     builder: (BuildContext context) {
-                      return new CollapsibleBody(
+                      return CollapsibleBody(
                         cancel: getString('settings_cancel'),
                         save: getString('settings_save'),
                         onSave: () { Form.of(context).save(); close(); },
                         onCancel: () { Form.of(context).reset(); close(); },
-                        child: new FormField<FontEnum>(
+                        child: FormField<FontEnum>(
                             initialValue: FontEnum.values.firstWhere((a) => capitalize(a.toString().split('.')[1].replaceAll('_', '')) == fontFamily),
                             onSaved: (FontEnum result) {
                               item.value = result;
@@ -375,20 +375,20 @@ class _SettingsPageState extends State<SettingsPage> {
                               });
                             },
                             builder: (FormFieldState<FontEnum> field) {
-                              return new Column(
+                              return Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: FontEnum.values.map((FontEnum a) => new Row(
+                                children: FontEnum.values.map((FontEnum a) => Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: <Widget>[
-                                    new Radio<FontEnum>(
+                                    Radio<FontEnum>(
                                       value: a,
                                       groupValue: field.value,
                                       onChanged: field.didChange,
                                     ),
-                                    new Text(
+                                    Text(
                                       capitalize(a.toString().split('.')[1].replaceAll('_', ' ')),
-                                      style: new TextStyle(
+                                      style: TextStyle(
                                           fontFamily: capitalize(a.toString().split('.')[1].replaceAll('_', ''))
                                       ),
                                     ),
@@ -404,7 +404,7 @@ class _SettingsPageState extends State<SettingsPage> {
             );
           }
       ),
-      new SettingsItem<double>(
+      SettingsItem<double>(
           name: getString('settings_fontSize'),
           value: fontSize,
           hint: getString('settings_fontSize_hint'),
@@ -415,15 +415,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 item.isExpanded = false;
               });
             }
-            return new Form(
-              child: new Builder(
+            return Form(
+              child: Builder(
                   builder: (BuildContext context) {
-                    return new CollapsibleBody(
+                    return CollapsibleBody(
                       cancel: getString('settings_cancel'),
                       save: getString('settings_save'),
                       onSave: () { Form.of(context).save(); close(); },
                       onCancel: () { Form.of(context).reset(); close(); },
-                      child: new FormField<double>(
+                      child: FormField<double>(
                         initialValue: item.value,
                         onSaved: (double value) {
                           item.value = value;
@@ -432,12 +432,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           saveFontSize(value);
                         },
                         builder: (FormFieldState<double> field) {
-                          return new Column(
+                          return Column(
                             children: <Widget>[
-                              new Row(
+                              Row(
                                 children: <Widget>[
-                                  new Flexible(
-                                    child: new Slider(
+                                  Flexible(
+                                    child: Slider(
                                       min: 8.0,
                                       max: 32.0,
                                       divisions: 12,
@@ -446,17 +446,17 @@ class _SettingsPageState extends State<SettingsPage> {
                                       onChanged: field.didChange,
                                     ),
                                   ),
-                                  new Container(
-                                    child: new Text(
+                                  Container(
+                                    child: Text(
                                       '${field.value}',
                                         style: Theme.of(context).textTheme.caption
                                     ),
                                   ),
                                 ],
                               ),
-                              new RichText(
+                              RichText(
                                 textAlign: TextAlign.left,
-                                text: new TextSpan(
+                                text: TextSpan(
                                   text: getString('settings_fontSize_testText'),
                                   style: Theme.of(context).textTheme.body1.copyWith(
                                     fontSize: field.value,
@@ -474,7 +474,7 @@ class _SettingsPageState extends State<SettingsPage> {
             );
           }
       ),
-      new SettingsItem<double>(
+      SettingsItem<double>(
           name: getString('settings_fontSpacing'),
           value: fontSpacing,
           hint: getString('settings_fontSpacing_hint'),
@@ -485,15 +485,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 item.isExpanded = false;
               });
             }
-            return new Form(
-              child: new Builder(
+            return Form(
+              child: Builder(
                   builder: (BuildContext context) {
-                    return new CollapsibleBody(
+                    return CollapsibleBody(
                       cancel: getString('settings_cancel'),
                       save: getString('settings_save'),
                       onSave: () { Form.of(context).save(); close(); },
                       onCancel: () { Form.of(context).reset(); close(); },
-                      child: new FormField<double>(
+                      child: FormField<double>(
                         initialValue: item.value,
                         onSaved: (double value) {
                           item.value = value;
@@ -502,12 +502,12 @@ class _SettingsPageState extends State<SettingsPage> {
                           saveFontSpacing(value);
                         },
                         builder: (FormFieldState<double> field) {
-                          return new Column(
+                          return Column(
                             children: <Widget>[
-                              new Row(
+                              Row(
                                 children: <Widget>[
-                                  new Flexible(
-                                    child: new Slider(
+                                  Flexible(
+                                    child: Slider(
                                       min: 1.0,
                                       max: 2.0,
                                       divisions: 8,
@@ -516,17 +516,17 @@ class _SettingsPageState extends State<SettingsPage> {
                                       onChanged: field.didChange,
                                     ),
                                   ),
-                                  new Container(
-                                    child: new Text(
+                                  Container(
+                                    child: Text(
                                         '${field.value}',
                                         style: Theme.of(context).textTheme.caption
                                     ),
                                   ),
                                 ],
                               ),
-                              new RichText(
+                              RichText(
                                 textAlign: TextAlign.left,
-                                text: new TextSpan(
+                                text: TextSpan(
                                   text: getString('settings_fontSize_testText'),
                                   style: Theme.of(context).textTheme.body1.copyWith(
                                     fontSize: fontSize,
@@ -557,45 +557,45 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     fetchConfig();
 
-    return new Scaffold(
+    return Scaffold(
       body: OrientationBuilder(
-        builder: (context, orientation) => new SafeArea(
-            child: new Stack(
+        builder: (context, orientation) => SafeArea(
+            child: Stack(
               children: <Widget>[
-                new ListView(
+                ListView(
                   children: <Widget>[
-                    new Container(height: 28.0),
-                    new Container(
+                    Container(height: 28.0),
+                    Container(
                       height: fontSize*2,
-                      child: new Align(
+                      child: Align(
                         alignment: Alignment.centerRight,
-                        child: new FlatButton(
+                        child: FlatButton(
                           onPressed: () {
                             Navigator.of(context).push(
-                                new FadeAnimationRoute(builder: (context) => VersionsPage())
+                                FadeAnimationRoute(builder: (context) => VersionsPage())
                             );
                           },
-                          child: new Text(
+                          child: Text(
                               getString('settings_manage_versions')
                           ),
                         ),
                       ),
                       color: Theme.of(context).canvasColor,
                     ),
-                    new Container(
+                    Container(
                       height: orientation == Orientation.portrait ? fontSize*6 : fontSize*3,
                       margin: EdgeInsets.only(top: orientation == Orientation.portrait ? fontSize*2 : fontSize),
-                      child: new Center(
-                        child: new RichText(
-                          text: new TextSpan(
+                      child: Center(
+                        child: RichText(
+                          text: TextSpan(
                               text: getString('title_settings'),
                               style: Theme.of(context).textTheme.body1.copyWith(
                                 fontSize: fontSize*2,
                               ),
-                              recognizer: new DoubleTapGestureRecognizer()
+                              recognizer: DoubleTapGestureRecognizer()
                                 ..onDoubleTap = () {
                                   Navigator.of(context).push(
-                                      new FadeAnimationRoute(builder: (context) => DeveloperSettingsPage())
+                                      FadeAnimationRoute(builder: (context) => DeveloperSettingsPage())
                                   ).then((onValue) {
                                     App.of(context).refresh();
                                   });
@@ -605,12 +605,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       color: Theme.of(context).canvasColor,
                     ),
-                    new ListTile(
-                      title: new Text(getString('settings_section_lookAndFeel')),
+                    ListTile(
+                      title: Text(getString('settings_section_lookAndFeel')),
                     ),
-                    new Container(
+                    Container(
                       margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      child: new ExpansionPanelList(
+                      child: ExpansionPanelList(
                           animationDuration: Duration(milliseconds: duration),
                           expansionCallback: (int index, bool isExpanded) {
                             setState(() {
@@ -618,7 +618,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             });
                           },
                           children: _lookAndFeelSettings.map((SettingsItem<dynamic> item) {
-                            return new ExpansionPanel(
+                            return ExpansionPanel(
                               isExpanded: item.isExpanded,
                               headerBuilder: item.headerBuilder(onTap: () => setState(() => item.isExpanded = !item.isExpanded)),
                               body: item.build(),
@@ -627,12 +627,12 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                       color: Theme.of(context).canvasColor,
                     ),
-                    new ListTile(
-                      title: new Text(getString('settings_section_reading')),
+                    ListTile(
+                      title: Text(getString('settings_section_reading')),
                     ),
-                    new Container(
+                    Container(
                       margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      child: new ExpansionPanelList(
+                      child: ExpansionPanelList(
                           animationDuration: Duration(milliseconds: duration),
                           expansionCallback: (int index, bool isExpanded) {
                             setState(() {
@@ -640,7 +640,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             });
                           },
                           children: _fontSettings.map((SettingsItem<dynamic> item) {
-                            return new ExpansionPanel(
+                            return ExpansionPanel(
                               isExpanded: item.isExpanded,
                               headerBuilder: item.headerBuilder(onTap: () => setState(() => item.isExpanded = !item.isExpanded)),
                               body: item.build(),
@@ -648,19 +648,19 @@ class _SettingsPageState extends State<SettingsPage> {
                           }).toList()
                       ),
                     ),
-                    new Container(height: 56.0),
+                    Container(height: 56.0),
                   ],
                 ),
-                appBarAtTop ? new Align(
+                appBarAtTop ? Align(
                   alignment: Alignment.topCenter,
-                  child: new Stack(
+                  child: Stack(
                     children: <Widget>[
-                      new IgnorePointer(
-                        child: new Align(
+                      IgnorePointer(
+                        child: Align(
                           alignment: Alignment.topCenter,
-                          child: new Container(
-                            decoration: new BoxDecoration(
-                              gradient: new LinearGradient(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [Theme.of(context).canvasColor, Theme.of(context).canvasColor.withAlpha(0)],
@@ -671,29 +671,29 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                         ),
                       ),
-                      new Align(
+                      Align(
                         alignment: Alignment.topLeft,
-                        child: new Container(
+                        child: Container(
                           height: 56.0,
                           width: 56.0,
-                          child: new IconButton(
-                            icon: new Icon(Icons.arrow_back),
+                          child: IconButton(
+                            icon: Icon(Icons.arrow_back),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                         ),
                       ),
                     ],
                   ),
-                ) : new Align(
+                ) : Align(
                   alignment: Alignment.bottomCenter,
-                  child: new Stack(
+                  child: Stack(
                     children: <Widget>[
-                      new IgnorePointer(
-                        child: new Align(
+                      IgnorePointer(
+                        child: Align(
                           alignment: Alignment.bottomCenter,
-                          child: new Container(
-                            decoration: new BoxDecoration(
-                              gradient: new LinearGradient(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
@@ -704,13 +704,13 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                         ),
                       ),
-                      new Align(
+                      Align(
                         alignment: Alignment.bottomLeft,
-                        child: new Container(
+                        child: Container(
                           height: 56.0,
                           width: 56.0,
-                          child: new IconButton(
-                            icon: new Icon(Icons.arrow_back),
+                          child: IconButton(
+                            icon: Icon(Icons.arrow_back),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                         ),
@@ -733,7 +733,7 @@ class SettingsItem<T> {
     this.hint,
     this.builder,
     this.valueToString
-  }) : textController = new TextEditingController(text: valueToString(value));
+  }) : textController = TextEditingController(text: valueToString(value));
 
   final String name;
   final String hint;
@@ -745,7 +745,7 @@ class SettingsItem<T> {
 
   ExpansionPanelHeaderBuilder headerBuilder({VoidCallback onTap}) {
     return (BuildContext context, bool isExpanded) {
-      return new DualHeaderWithHint(
+      return DualHeaderWithHint(
         name: name,
         value: valueToString(value),
         hint: hint,
@@ -778,29 +778,29 @@ class DualHeaderWithHint extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
-    return new GestureDetector(
+    return GestureDetector(
       onTap: onTap,
-      child: new Row(
+      child: Row(
         children: <Widget>[
-          new Expanded(
+          Expanded(
             flex: 4,
-            child: new Container(
+            child: Container(
               margin: const EdgeInsets.only(left: 24.0),
-              child: new FittedBox(
+              child: FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
-                child: new Text(
+                child: Text(
                   name,
                   style: textTheme.body1.copyWith(fontSize: 15.0),
                 ),
               ),
             ),
           ),
-          new Expanded(
+          Expanded(
             flex: 4,
-            child: new Container(
+            child: Container(
               margin: const EdgeInsets.only(left: 24.0),
-              child: new Text(value, style: textTheme.caption.copyWith(fontSize: 15.0)),
+              child: Text(value, style: textTheme.caption.copyWith(fontSize: 15.0)),
             ),
           ),
         ],
@@ -831,34 +831,34 @@ class CollapsibleBody extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final TextTheme textTheme = theme.textTheme;
 
-    return new Column(
+    return Column(
       children: <Widget>[
-        new Container(
+        Container(
           margin: const EdgeInsets.only(
             left: 24.0,
             right: 24.0,
             bottom: 24.0,
           ) - margin,
-          child: new Center(
-            child: new DefaultTextStyle(
+          child: Center(
+            child: DefaultTextStyle(
               style: textTheme.caption.copyWith(fontSize: 15.0),
               child: child
             )
           )
         ),
         const Divider(height: 1.0),
-        new Container(
+        Container(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: new Row(
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              new Container(
+              Container(
                 margin: const EdgeInsets.only(right: 8.0),
-                child: new FlatButton(
+                child: FlatButton(
                   onPressed: onCancel,
-                  child: new Text(
+                  child: Text(
                     cancel,
-                    style: new TextStyle(
+                    style: TextStyle(
                       color: Theme.of(context).textTheme.caption.color,
                       fontSize: 15.0,
                       fontWeight: FontWeight.w500
@@ -866,12 +866,12 @@ class CollapsibleBody extends StatelessWidget {
                   ),
                 ),
               ),
-              new Container(
+              Container(
                 margin: const EdgeInsets.only(right: 8.0),
-                child: new FlatButton(
+                child: FlatButton(
                   onPressed: onSave,
                   textTheme: ButtonTextTheme.accent,
-                  child: new Text(save)
+                  child: Text(save)
                 ),
               ),
             ],
@@ -882,27 +882,19 @@ class CollapsibleBody extends StatelessWidget {
   }
 }
 
-class FadeAnimationRoute<T> extends MaterialPageRoute<T> {
-  FadeAnimationRoute({
-    WidgetBuilder builder,
-    RouteSettings settings
-  }) : super(builder: builder, settings: settings);
-
-  @override
-  Widget buildTransitions(BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child) {
-    if (settings.isInitialRoute)
-      return child;
-    return new FadeTransition(opacity: animation, child: child);
-  }
+Route FadeAnimationRoute({WidgetBuilder builder}) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => Builder(builder: builder),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(opacity: animation, child: child);
+    },
+  );
 }
 
 class DeveloperSettingsPage extends StatefulWidget {
 
   @override
-  _DeveloperSettingsPageState createState() => new _DeveloperSettingsPageState();
+  _DeveloperSettingsPageState createState() => _DeveloperSettingsPageState();
 }
 
 class _DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
@@ -914,14 +906,14 @@ class _DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await showDialog<String>(
             context: context,
-            builder: (BuildContext context) => new AlertDialog(
-              title: new Text(getString('developer_warning_title')),
-              content: new GestureDetector(
-                child: new Text(getString('developer_warning_content')),
+            builder: (BuildContext context) => AlertDialog(
+              title: Text(getString('developer_warning_title')),
+              content: GestureDetector(
+                child: Text(getString('developer_warning_content')),
               ),
               actions: <Widget>[
-                new FlatButton(
-                  child: new Text('CLOSE'),
+                FlatButton(
+                  child: Text('CLOSE'),
                   onPressed: () async {
                     Navigator.of(context).pop();
                   },
@@ -952,36 +944,36 @@ class _DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new WillPopScope(
+    return WillPopScope(
       onWillPop: () { Navigator.pop(context); },
-      child: new Scaffold(
-        body: new SafeArea(
-          child: new Stack(
+      child: Scaffold(
+        body: SafeArea(
+          child: Stack(
             children: <Widget>[
-              new ListView(
+              ListView(
                 children: <Widget>[
-                  new Container(
+                  Container(
                     height: fontSize*6,
                     margin: EdgeInsets.only(top: fontSize*4),
-                    child: new Center(
-                      child: new RichText(
-                        text: new TextSpan(
+                    child: Center(
+                      child: RichText(
+                        text: TextSpan(
                           text: getString('title_settings_developer'),
                           style: Theme.of(context).textTheme.body1.copyWith(
                             fontSize: fontSize*2,
                           ),
                           recognizer: TapGestureRecognizer()..onTap = () => showDialog<String>(
                               context: context,
-                              builder: (BuildContext context) => new AlertDialog(
-                                title: new Text('Firebase Messaging Token'),
-                                content: new GestureDetector(
-                                  child: new Text('Your Firebase Messaging Token is: $firebaseMessagingToken. \nTap to copy the token.'),
+                              builder: (BuildContext context) => AlertDialog(
+                                title: Text('Firebase Messaging Token'),
+                                content: GestureDetector(
+                                  child: Text('Your Firebase Messaging Token is: $firebaseMessagingToken. \nTap to copy the token.'),
                                   onTap: () => Clipboard.setData(ClipboardData(text: firebaseMessagingToken)),
                                   onDoubleTap: () => Share.share(firebaseMessagingToken),
                                 ),
                                 actions: <Widget>[
-                                  new FlatButton(
-                                    child: new Text('CLOSE'),
+                                  FlatButton(
+                                    child: Text('CLOSE'),
                                     onPressed: () async {
                                       Navigator.of(context).pop();
                                     },
@@ -994,19 +986,19 @@ class _DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
                     ),
                     color: Theme.of(context).canvasColor,
                   ),
-                  new ListTile(
-                    title: new Text(getString('developer_active_pages')),
+                  ListTile(
+                    title: Text(getString('developer_active_pages')),
                   ),
-                  new Container(
+                  Container(
                     padding: EdgeInsets.all(4.0),
-                    child: new Card(
+                    child: Card(
                       elevation: 1.0,
-                      child: new Column(
-                        children: pages.map((page) => new Container(
-                          child: new ListTile(
+                      child: Column(
+                        children: pages.map((page) => Container(
+                          child: ListTile(
                             contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                            title: new Text(getString(page.key)),
-                            trailing: new Switch(value: page.isActive, onChanged: (b) {
+                            title: Text(getString(page.key)),
+                            trailing: Switch(value: page.isActive, onChanged: (b) {
                               setState(() => page.isActive = b);
                               savePageActiveState(page.key, b);
                             }),
@@ -1015,35 +1007,35 @@ class _DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
                       ),
                     ),
                   ),
-                  new ListTile(
-                    title: new Text(getString('developer_debugging')),
+                  ListTile(
+                    title: Text(getString('developer_debugging')),
                   ),
-                  new Container(
+                  Container(
                     padding: EdgeInsets.all(4.0),
-                    child: new Card(
+                    child: Card(
                       elevation: 1.0,
-                      child: new Column(
+                      child: Column(
                         children: [
-                          new ListTile(
+                          ListTile(
                             contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                            title: new Text(getString('developer_showPerformanceOverlay')),
-                            trailing: new Switch(value: showPerformanceOverlay, onChanged: (b) {
+                            title: Text(getString('developer_showPerformanceOverlay')),
+                            trailing: Switch(value: showPerformanceOverlay, onChanged: (b) {
                               setState(() => showPerformanceOverlay = b);
                               savePageActiveState('showPerformanceOverlay', b);
                             }),
                           ),
-                          new ListTile(
+                          ListTile(
                             contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                            title: new Text(getString('developer_checkerboardOffscreenLayers')),
-                            trailing: new Switch(value: checkerboardOffscreenLayers, onChanged: (b) {
+                            title: Text(getString('developer_checkerboardOffscreenLayers')),
+                            trailing: Switch(value: checkerboardOffscreenLayers, onChanged: (b) {
                               setState(() => checkerboardOffscreenLayers = b);
                               savePageActiveState('checkerboardOffscreenLayers', b);
                             }),
                           ),
-                          new ListTile(
+                          ListTile(
                             contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
-                            title: new Text(getString('developer_checkerboardRasterCacheImages')),
-                            trailing: new Switch(value: checkerboardRasterCacheImages, onChanged: (b) {
+                            title: Text(getString('developer_checkerboardRasterCacheImages')),
+                            trailing: Switch(value: checkerboardRasterCacheImages, onChanged: (b) {
                               setState(() => checkerboardRasterCacheImages = b);
                               savePageActiveState('checkerboardRasterCacheImages', b);
                             }),
@@ -1052,25 +1044,25 @@ class _DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
                       ),
                     ),
                   ),
-                  new Container(
+                  Container(
                     height: 40.0,
-                    child: new FlatButton(
-                      child: new Text('CLEAR ALL SETTINGS'),
+                    child: FlatButton(
+                      child: Text('CLEAR ALL SETTINGS'),
                       onPressed: () async {
                         showDialog<DialogAction>(
                             context: context,
-                            builder: (BuildContext context) => new AlertDialog(
-                              title: new Text('Are you sure you want to clear all settings?'),
-                              content: new Text(
+                            builder: (BuildContext context) => AlertDialog(
+                              title: Text('Are you sure you want to clear all settings?'),
+                              content: Text(
                                   'All settings will revert to the default. You cannot undo this action.'
                               ),
                               actions: <Widget>[
-                                new FlatButton(
-                                  child: new Text('CANCEL'),
+                                FlatButton(
+                                  child: Text('CANCEL'),
                                   onPressed: () => Navigator.pop(context, DialogAction.cancel),
                                 ),
-                                new FlatButton(
-                                  child: new Text('OK'),
+                                FlatButton(
+                                  child: Text('OK'),
                                   onPressed: () => Navigator.pop(context, DialogAction.confirm),
                                 ),
                               ],
@@ -1089,15 +1081,15 @@ class _DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
                       },
                     ),
                   ),
-                  new Container(height: 56.0),
+                  Container(height: 56.0),
                 ],
               ),
-              new IgnorePointer(
-                child: new Align(
+              IgnorePointer(
+                child: Align(
                   alignment: Alignment.bottomCenter,
-                  child: new Container(
-                    decoration: new BoxDecoration(
-                      gradient: new LinearGradient(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
@@ -1108,23 +1100,23 @@ class _DeveloperSettingsPageState extends State<DeveloperSettingsPage> {
                   ),
                 ),
               ),
-              appBarAtTop ? new Align(
+              appBarAtTop ? Align(
                 alignment: Alignment.topLeft,
-                child: new Container(
+                child: Container(
                   height: 56.0,
                   width: 56.0,
-                  child: new IconButton(
-                    icon: new Icon(Icons.arrow_back),
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),
-              ) : new Align(
+              ) : Align(
                 alignment: Alignment.bottomLeft,
-                child: new Container(
+                child: Container(
                   height: 56.0,
                   width: 56.0,
-                  child: new IconButton(
-                    icon: new Icon(Icons.arrow_back),
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back),
                     onPressed: () => Navigator.pop(context),
                   ),
                 ),

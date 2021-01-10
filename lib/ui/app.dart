@@ -10,7 +10,7 @@ import 'package:bible/ui/bookmarks.dart';
 import 'package:bible/ui/home.dart';
 import 'package:bible/ui/plan_manager_page.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Page;
 import 'package:flutter/scheduler.dart' show timeDilation;
 
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -38,7 +38,7 @@ User user;
 
 String firebaseMessagingToken = '';
 
-String currentVersion = '0.4.1-a';
+String currentVersion = '0.4.2-a';
 
 String ipAddress;
 

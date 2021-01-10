@@ -480,7 +480,7 @@ class _VersionState extends State<Version> with AutomaticKeepAliveClientMixin {
         "$url/$filename",
         '$dir/$filename',
         cancelToken: token,
-        onProgress: (received, total) {
+        onReceiveProgress: (received, total) {
           setState(() => progress = received/total);
           print(progress);
         },
@@ -645,7 +645,7 @@ class VersionsManager {
       await dio.download(
           "$url/versions.json",
           '$dir/versions.json',
-          onProgress: (received, total) {
+          onReceiveProgress: (received, total) {
             print(received/total);
           }
       );

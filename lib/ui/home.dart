@@ -45,7 +45,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
-  SwiperController swipeController = new SwiperController();
+  SwiperController swipeController = SwiperController();
 
   NavigationBar navigationBar;
 
@@ -96,17 +96,17 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         await Future.delayed(Duration(seconds: 1));
         await showDialog<String>(
             context: context,
-            builder: (BuildContext context) => new AlertDialog(
-              title: new Text("Gestures:"),
-              content: new GestureDetector(
-                child: new Text('- Scroll on the bottom bar displaying the book and chapter to pick, and press the OK button to confirm'
+            builder: (BuildContext context) => AlertDialog(
+              title: Text("Gestures:"),
+              content: GestureDetector(
+                child: Text('- Scroll on the bottom bar displaying the book and chapter to pick, and press the OK button to confirm'
                     '\n- Double tap on the bottom bar to open an expanded reference picker'
                     '\n- Swipe left/right to navigate chapters'
                     '\n- Double tap to open the search page'),
               ),
               actions: <Widget>[
-                new FlatButton(
-                  child: new Text('CLOSE'),
+                FlatButton(
+                  child: Text('CLOSE'),
                   onPressed: () async {
                     Navigator.of(context).pop();
                   },
@@ -133,22 +133,22 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
     }
 
     var listAppBar = PreferredSize(
-      child: new SafeArea(
+      child: SafeArea(
         child: navigationBar
       ),
-      preferredSize: new Size.fromHeight(56.0),
+      preferredSize: Size.fromHeight(56.0),
     );
 
     return OrientationBuilder(
       builder: (context, orientation) => defaultVersion.isNotEmpty
           ? Scaffold(
-        body: new SafeArea(
-            child: new Stack(
+        body: SafeArea(
+            child: Stack(
               children: <Widget>[
-                new GestureDetector(
+                GestureDetector(
                   onDoubleTap: () {
                     Navigator.of(context).push<Tuple2>(
-                        new FadeAnimationRoute(builder: (context) => SearchWindow())
+                        FadeAnimationRoute(builder: (context) => SearchWindow())
                     ).then<void>((Tuple2<dynamic, dynamic> value) {
                       if(value != null) {
                         setState(() {
@@ -165,40 +165,40 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                       itemCount: bible.chaptersLength(),
                       itemBuilder: (BuildContext context, int index) => FutureBuilder(
                         future: bible.getPageIndex(context, index, orientation: orientation),
-                        initialData: new Center(
-                          child: new CircularProgressIndicator(),
+                        initialData: Center(
+                          child: CircularProgressIndicator(),
                         ),
                         builder: (BuildContext context, AsyncSnapshot<Widget> data) {
                           switch(data.connectionState) {
                             case ConnectionState.waiting:
-                              return new Center(
-                                child: new CircularProgressIndicator(),
+                              return Center(
+                                child: CircularProgressIndicator(),
                               );
                             default:
                               Tuple2<int, int> tmp = bible.fromIndex(index);
-                              return new Scrollbar(
+                              return Scrollbar(
                                 child: CustomScrollView(
                                   slivers: <Widget>[
                                     SliverList(
                                       delegate: SliverChildListDelegate([
-                                        new Container(
+                                        Container(
                                           height: orientation == Orientation.portrait ? fontSize*8 : fontSize*4,
                                           margin: EdgeInsets.only(
                                             top: orientation == Orientation.portrait ? fontSize*2 : fontSize,
                                             bottom: fontSize,
                                           ),
-                                          child: new Center(
-                                            child: new RichText(
+                                          child: Center(
+                                            child: RichText(
                                               textAlign: TextAlign.center,
-                                              text: new TextSpan(
+                                              text: TextSpan(
                                                   children: [
-                                                    new TextSpan(
+                                                    TextSpan(
                                                       text: '${bible.getBookHuman(tmp.item1)}',
                                                       style: Theme.of(context).textTheme.body1.copyWith(
                                                         fontSize: fontSize*2,
                                                       ),
                                                     ),
-                                                    new TextSpan(
+                                                    TextSpan(
                                                       text: '\n${chapter+1}',
                                                       style: Theme.of(context).textTheme.body1.copyWith(
                                                         fontSize: fontSize*1.6,
@@ -234,20 +234,20 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
         ),
         appBar: appBarAtTop ? listAppBar : null,
         bottomNavigationBar: appBarAtTop ? null : listAppBar,
-      ) : new Scaffold(
-        body: new SafeArea(
-          child: new Stack(
+      ) : Scaffold(
+        body: SafeArea(
+          child: Stack(
             children: <Widget>[
-              new Center(
-                child: new Column(
+              Center(
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    new Container(
+                    Container(
                       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-                      child: new Center(
-                        child: new RichText(
+                      child: Center(
+                        child: RichText(
                           textAlign: TextAlign.center,
-                          text: new TextSpan(
+                          text: TextSpan(
                             text: getString('no_default_version_title'),
                             style: Theme.of(context).textTheme.body1.copyWith(
                               fontSize: fontSize*1.6,
@@ -256,12 +256,12 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                         ),
                       ),
                     ),
-                    new Container(
+                    Container(
                       padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 24.0),
-                      child: new Center(
-                        child: new RichText(
+                      child: Center(
+                        child: RichText(
                           textAlign: TextAlign.center,
-                          text: new TextSpan(
+                          text: TextSpan(
                             text: '${getString('no_default_version_subtitle')}',
                             style: Theme.of(context).textTheme.body1.copyWith(
                               fontSize: fontSize,
@@ -271,23 +271,23 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                         ),
                       ),
                     ),
-                    new FlatButton(
+                    FlatButton(
                       onPressed: () {
                         Navigator.of(context).push(
-                            new FadeAnimationRoute(builder: (context) => VersionsPage())
+                            FadeAnimationRoute(builder: (context) => VersionsPage())
                         );
                       },
-                      child: new Text(getString('select_default_version')),
+                      child: Text(getString('select_default_version')),
                     ),
-                    new Container(height: 56.0),
+                    Container(height: 56.0),
                   ],
                 ),
               ),
-              new Align(
+              Align(
                 alignment: Alignment.bottomCenter,
-                child: new Container(
-                  decoration: new BoxDecoration(
-                    gradient: new LinearGradient(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
@@ -296,21 +296,21 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
                   ),
                   height: 56.0,
                   alignment: Alignment.bottomCenter,
-                  child: new Row(
+                  child: Row(
                     children: [
-                      new Expanded(
-                          child: new Container(
+                      Expanded(
+                          child: Container(
                             height: 56.0,
                             width: 56.0,
-                            child: new IconButton(
-                              icon: new Icon(Icons.arrow_back),
+                            child: IconButton(
+                              icon: Icon(Icons.arrow_back),
                               onPressed: () => Navigator.of(context).pop(),
                             ),
                           ),
                           flex: 2
                       ),
-                      new Expanded(
-                        child: new Opacity(opacity: 0.0),
+                      Expanded(
+                        child: Opacity(opacity: 0.0),
                         flex: 11,
                       )
                     ],
@@ -377,7 +377,7 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
 
     swipeController.move(bible.index(book, chapter), animation: false);
 
-    logEvent('bible_opened', {'book': book, 'chapter': chapter, 'toText': bible.chapterAsText(new Tuple2(book, chapter))});
+    logEvent('bible_opened', {'book': book, 'chapter': chapter, 'toText': bible.chapterAsText(Tuple2(book, chapter))});
 
     //prefs.setInt(versePrefs, verse);
   }
@@ -416,17 +416,17 @@ class _NavigationBarState extends State<NavigationBar> {
     _tmpBook = _book = widget.initialBook ?? 0;
     _tmpChapter = _chapter = widget.initialChapter ?? 0;
 
-    bookController = new FixedExtentScrollController(
+    bookController = FixedExtentScrollController(
         initialItem: book
     );
-    chapterController = new FixedExtentScrollController(
+    chapterController = FixedExtentScrollController(
         initialItem: chapter
     );
 
     bookScrollView = ListWheelScrollView(
-      children: List.generate(bible.length(), (i) => new ListTile(
+      children: List.generate(bible.length(), (i) => ListTile(
         contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
-        title: new Text(
+        title: Text(
           bible.books.keys.toList()[i].item2,
           textAlign: TextAlign.center,
           softWrap: true,
@@ -438,10 +438,10 @@ class _NavigationBarState extends State<NavigationBar> {
       onSelectedItemChanged: (int index) => changeBook(index),
       physics: FixedExtentScrollPhysics(),
     );
-    chapterScrollView = new ListWheelScrollView(
-      children: List.generate(bible.books[bible.books.keys.toList()[book]].length(), (i) => new ListTile(
+    chapterScrollView = ListWheelScrollView(
+      children: List.generate(bible.books[bible.books.keys.toList()[book]].length(), (i) => ListTile(
         contentPadding: EdgeInsets.zero,
-        title: new Text(
+        title: Text(
           "${(i+1)}",
           textAlign: TextAlign.center,
         ),
@@ -466,18 +466,18 @@ class _NavigationBarState extends State<NavigationBar> {
       color: Theme.of(context).canvasColor,
       height: 56.0,
       alignment: Alignment.center,
-      child: new Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          new Container(
-            child: new IconButton(
-              icon: new Icon(Icons.menu),
+          Container(
+            child: IconButton(
+              icon: Icon(Icons.menu),
               onPressed: () => Navigator.of(context).pop(),
             ),
             margin: EdgeInsets.symmetric(horizontal: 4.0),
           ),
-          new Expanded(
-            child: new GestureDetector(
+          Expanded(
+            child: GestureDetector(
               onLongPress: () {
                 tmpBook = book;
                 tmpChapter = chapter;
@@ -486,7 +486,7 @@ class _NavigationBarState extends State<NavigationBar> {
               onDoubleTap: () {
                 showDialog(
                     context: context,
-                    builder: (BuildContext context) => new BibleNavigation(
+                    builder: (BuildContext context) => BibleNavigation(
                       initialBook: tmpBook,
                       initialChapter: tmpChapter,
                     )
@@ -500,14 +500,14 @@ class _NavigationBarState extends State<NavigationBar> {
                   }
                 });
               },
-              child: new Row(
+              child: Row(
                 children: <Widget>[
-                  new Expanded(
-                    child: bookScrollView ?? new Container(),
+                  Expanded(
+                    child: bookScrollView ?? Container(),
                     flex: 11,
                   ),
-                  new Expanded(
-                    child: chapterScrollView ?? new Container(),
+                  Expanded(
+                    child: chapterScrollView ?? Container(),
                     flex: 4,
                   ),
                 ],
@@ -515,26 +515,26 @@ class _NavigationBarState extends State<NavigationBar> {
             ),
             flex: 15,
           ),
-          new Expanded(
-            child: new FlatButton(
+          Expanded(
+            child: FlatButton(
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   Navigator.of(context).push(
-                      new FadeAnimationRoute(builder: (context) => VersionsPage())
+                      FadeAnimationRoute(builder: (context) => VersionsPage())
                   );
                 },
-                child: new Text(
+                child: Text(
                   defaultVersion.isEmpty ? 'NONE' : defaultVersionFormatted(),
                   textAlign: TextAlign.left,
                 )
             ),
             flex: 5,
           ),
-          new Expanded(
-            child: new FlatButton(
+          Expanded(
+            child: FlatButton(
               padding: EdgeInsets.zero,
               onPressed: isChanged() ? setText : null,
-              child: new Text("OK"),
+              child: Text("OK"),
             ),
             flex: 4,
           ),
@@ -561,10 +561,10 @@ class _NavigationBarState extends State<NavigationBar> {
 
   changeBook(int b) {
     setState(() {
-      chapterScrollView = new ListWheelScrollView(
-        children: List.generate(bible.books[bible.books.keys.toList()[b]].length(), (i) => new ListTile(
+      chapterScrollView = ListWheelScrollView(
+        children: List.generate(bible.books[bible.books.keys.toList()[b]].length(), (i) => ListTile(
           contentPadding: EdgeInsets.zero,
-          title: new Text(
+          title: Text(
             "${(i+1)}",
             textAlign: TextAlign.center,
           ),
@@ -611,7 +611,7 @@ class _BibleNavigationState extends State<BibleNavigation> {
 
   int _book, _chapter, _tmpBook, _tmpChapter;
 
-  TextEditingController textEditingController = new TextEditingController();
+  TextEditingController textEditingController = TextEditingController();
 
   bool search = false;
 
@@ -622,25 +622,25 @@ class _BibleNavigationState extends State<BibleNavigation> {
     _tmpBook = _book = widget.initialBook ?? 0;
     _tmpChapter = _chapter = widget.initialChapter ?? 0;
 
-    bookController = new FixedExtentScrollController(
+    bookController = FixedExtentScrollController(
         initialItem: _book
     );
-    chapterController = new FixedExtentScrollController(
+    chapterController = FixedExtentScrollController(
         initialItem: _chapter
     );
 
-    chapters = List.generate(bible.books[bible.books.keys.toList()[_book]].length(), (i) => new ListTile(
+    chapters = List.generate(bible.books[bible.books.keys.toList()[_book]].length(), (i) => ListTile(
       contentPadding: EdgeInsets.zero,
-      title: new Text(
+      title: Text(
         "${(i+1)}",
         textAlign: TextAlign.center,
       ),
     ));
 
-/*    verseScrollView = new ListWheelScrollView(
-      children: List.generate(bible.books[bible.books.keys.toList()[book]].chapters[chapter].length(), (i) => new ListTile(
+/*    verseScrollView = ListWheelScrollView(
+      children: List.generate(bible.books[bible.books.keys.toList()[book]].chapters[chapter].length(), (i) => ListTile(
         contentPadding: EdgeInsets.zero,
-        title: new Text(
+        title: Text(
           "${(i+1)}",
           textAlign: TextAlign.center,
         ),
@@ -666,12 +666,12 @@ class _BibleNavigationState extends State<BibleNavigation> {
 
   @override
   Widget build(BuildContext context) {
-    return new AlertDialog(
+    return AlertDialog(
       title: !search ? Row(
         children: <Widget>[
           Expanded(
             child: GestureDetector(
-              child: new Text('${bible.books.keys.toList()[_tmpBook].item2} ${_tmpChapter+1}'),
+              child: Text('${bible.books.keys.toList()[_tmpBook].item2} ${_tmpChapter+1}'),
               onTap: toggleSearch,
             ),
           ),
@@ -686,18 +686,18 @@ class _BibleNavigationState extends State<BibleNavigation> {
             icon: Icon(Icons.arrow_back),
             onPressed: toggleSearch,
           ),
-          new Expanded(
-            child: new TextField(
+          Expanded(
+            child: TextField(
               controller: textEditingController,
-              decoration: new InputDecoration(
+              decoration: InputDecoration(
                   hintText: 'Search',
                   border: InputBorder.none
               ),
               onSubmitted: (s) => searchChapter(s),
             ),
           ),
-          new IconButton(
-            icon: new Icon(Icons.cancel),
+          IconButton(
+            icon: Icon(Icons.cancel),
             onPressed: () {
               textEditingController.clear();
               setState(() {});
@@ -707,15 +707,15 @@ class _BibleNavigationState extends State<BibleNavigation> {
       ),
       content: Stack(
         children: <Widget>[
-          new Row(
+          Row(
             children: <Widget>[
               Expanded(
                 child: ListWheelScrollView.useDelegate(
                   childDelegate: ListWheelChildBuilderDelegate(
                       childCount: bible.length(),
-                      builder: (BuildContext context, int index) => new ListTile(
+                      builder: (BuildContext context, int index) => ListTile(
                         contentPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                        title: new Text(
+                        title: Text(
                           bible.books.keys.toList()[index].item2,
                           textAlign: TextAlign.center,
                           softWrap: true,
@@ -747,12 +747,12 @@ class _BibleNavigationState extends State<BibleNavigation> {
               ),*/
             ],
           ),
-          new IgnorePointer(
-            child: new Align(
+          IgnorePointer(
+            child: Align(
               alignment: Alignment.bottomCenter,
-              child: new Container(
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [Theme.of(context).dialogBackgroundColor.withAlpha(0), Theme.of(context).dialogBackgroundColor],
@@ -763,12 +763,12 @@ class _BibleNavigationState extends State<BibleNavigation> {
               ),
             ),
           ),
-          new IgnorePointer(
-            child: new Align(
+          IgnorePointer(
+            child: Align(
               alignment: Alignment.topCenter,
-              child: new Container(
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [Theme.of(context).dialogBackgroundColor, Theme.of(context).dialogBackgroundColor.withAlpha(0)],
@@ -782,13 +782,13 @@ class _BibleNavigationState extends State<BibleNavigation> {
         ],
       ),
       actions: <Widget>[
-        new FlatButton(
-          child: new Text('CANCEL'),
-          onPressed: () => Navigator.pop(context, new Tuple2(DialogAction.confirm, null)),
+        FlatButton(
+          child: Text('CANCEL'),
+          onPressed: () => Navigator.pop(context, Tuple2(DialogAction.confirm, null)),
         ),
-        new FlatButton(
-          child: new Text('OK'),
-          onPressed: _isChanged() ? () => Navigator.pop(context, new Tuple2(DialogAction.confirm, new Tuple2(_tmpBook, _tmpChapter))) : null,
+        FlatButton(
+          child: Text('OK'),
+          onPressed: _isChanged() ? () => Navigator.pop(context, Tuple2(DialogAction.confirm, Tuple2(_tmpBook, _tmpChapter))) : null,
         ),
       ],
     );
@@ -812,9 +812,9 @@ class _BibleNavigationState extends State<BibleNavigation> {
   changeBook(int b) {
     setState(() {
       _tmpBook = b;
-      chapters = List.generate(bible.books[bible.books.keys.toList()[_tmpBook]].length(), (i) => new ListTile(
+      chapters = List.generate(bible.books[bible.books.keys.toList()[_tmpBook]].length(), (i) => ListTile(
         contentPadding: EdgeInsets.zero,
-        title: new Text(
+        title: Text(
           "${(i+1)}",
           textAlign: TextAlign.center,
         ),
@@ -828,10 +828,10 @@ class _BibleNavigationState extends State<BibleNavigation> {
   }
   changeChapter(int c) {
     setState(() {
-      /*verseScrollView = new ListWheelScrollView(
-        children: List.generate(bible.books[bible.books.keys.toList()[tmpBook]].chapters[c].length(), (i) => new ListTile(
+      /*verseScrollView = ListWheelScrollView(
+        children: List.generate(bible.books[bible.books.keys.toList()[tmpBook]].chapters[c].length(), (i) => ListTile(
           contentPadding: EdgeInsets.zero,
-          title: new Text(
+          title: Text(
             "${(i+1)}",
             textAlign: TextAlign.center,
           ),
@@ -867,20 +867,20 @@ class _TutorialSequenceState extends State<TutorialSequence> {
 
   @override
   Widget build(BuildContext context) {
-    return new Column(
+    return Column(
       children: <Widget>[
-        new Expanded(
-          child: new Row(
+        Expanded(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              new Expanded(
-                child: new Container(),
+              Expanded(
+                child: Container(),
                 flex: 7,
               ),
-              new Expanded(
-                child: new Container(
+              Expanded(
+                child: Container(
                   height: 210.0,
-                  child: new Arrow(
+                  child: Arrow(
                     length: 7.0,
                     color: Theme.of(context).textTheme.title.color,
                     repeat: true,
@@ -888,14 +888,14 @@ class _TutorialSequenceState extends State<TutorialSequence> {
                 ),
                 flex: 4,
               ),
-              new Expanded(
-                child: new Container(),
+              Expanded(
+                child: Container(),
                 flex: 4,
               ),
-              new Expanded(
-                child: new Container(
+              Expanded(
+                child: Container(
                   height: 210.0,
-                  child: new Arrow(
+                  child: Arrow(
                     length: 7.0,
                     color: Theme.of(context).textTheme.title.color,
                     repeat: true,
@@ -903,14 +903,14 @@ class _TutorialSequenceState extends State<TutorialSequence> {
                 ),
                 flex: 4,
               ),
-              new Expanded(
-                child: new Container(),
+              Expanded(
+                child: Container(),
                 flex: 5,
               ),
-              new Expanded(
-                child: new Container(
+              Expanded(
+                child: Container(
                   height: 150.0,
-                  child: new Arrow(
+                  child: Arrow(
                     length: 5.0,
                     color: Theme.of(context).textTheme.title.color,
                     repeat: true,

@@ -45,7 +45,7 @@ class PlanDaysPage extends StatefulWidget {
   );
 
   @override
-  _PlanDaysPageState createState() => new _PlanDaysPageState();
+  _PlanDaysPageState createState() => _PlanDaysPageState();
 }
 class _PlanDaysPageState extends State<PlanDaysPage> {
   PageController pageController;
@@ -56,7 +56,7 @@ class _PlanDaysPageState extends State<PlanDaysPage> {
   @override
   void initState() {
     super.initState();
-    pageController = new PageController(initialPage: widget.index);
+    pageController = PageController(initialPage: widget.index);
     currentIndex = widget.index;
     pageController.addListener(() {
       setState(() => currentIndex = pageController.page.toInt());
@@ -72,26 +72,26 @@ class _PlanDaysPageState extends State<PlanDaysPage> {
   @override
   Widget build(BuildContext context) {
     var appBar = PreferredSize(
-      child: new SafeArea(
-        child: new Container(
+      child: SafeArea(
+        child: Container(
           height: 56.0,
           alignment: Alignment.center,
-          child: new Row(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Container(
-                child: new IconButton(
-                  icon: new Icon(Icons.arrow_back),
+              Container(
+                child: IconButton(
+                  icon: Icon(Icons.arrow_back),
                   onPressed: () { Navigator.pop(context); },
                 ),
                 margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
-              new Expanded(
-                child: new Container(),
+              Expanded(
+                child: Container(),
               ),
-              new Container(
-                child: new IconButton(
-                  icon: new Icon(Icons.menu),
+              Container(
+                child: IconButton(
+                  icon: Icon(Icons.menu),
                   onPressed: () => print('menu'),
                 ),
                 margin: EdgeInsets.symmetric(horizontal: 4.0),
@@ -100,16 +100,16 @@ class _PlanDaysPageState extends State<PlanDaysPage> {
           ),
         ),
       ),
-      preferredSize: new Size.fromHeight(56.0),
+      preferredSize: Size.fromHeight(56.0),
     );
 
-    return new OrientationBuilder(
-      builder: (context, orientation) => new Scaffold(
-        body: new SafeArea(
-          child: new Stack(
+    return OrientationBuilder(
+      builder: (context, orientation) => Scaffold(
+        body: SafeArea(
+          child: Stack(
             children: <Widget>[
               PageView.builder(
-                physics: new AlwaysScrollableScrollPhysics(),
+                physics: AlwaysScrollableScrollPhysics(),
                 controller: pageController,
                 itemCount: widget.plan.days.length,
                 itemBuilder: (BuildContext context, int index) => DayPage(
@@ -118,16 +118,16 @@ class _PlanDaysPageState extends State<PlanDaysPage> {
                   startingDate: widget.plan.startingDate,
                 ),
               ),
-              appBarAtTop ? new Align(
+              appBarAtTop ? Align(
                 alignment: Alignment.topCenter,
-                child: new Stack(
+                child: Stack(
                   children: <Widget>[
-                    new IgnorePointer(
-                      child: new Align(
+                    IgnorePointer(
+                      child: Align(
                         alignment: Alignment.topCenter,
-                        child: new Container(
-                          decoration: new BoxDecoration(
-                            gradient: new LinearGradient(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Theme.of(context).canvasColor, Theme.of(context).canvasColor.withAlpha(0)],
@@ -138,22 +138,22 @@ class _PlanDaysPageState extends State<PlanDaysPage> {
                         ),
                       ),
                     ),
-                    new Align(
+                    Align(
                       alignment: Alignment.topLeft,
                       child: appBar,
                     ),
                   ],
                 ),
-              ) : new Align(
+              ) : Align(
                 alignment: Alignment.bottomCenter,
-                child: new Stack(
+                child: Stack(
                   children: <Widget>[
-                    new IgnorePointer(
-                      child: new Align(
+                    IgnorePointer(
+                      child: Align(
                         alignment: Alignment.bottomCenter,
-                        child: new Container(
-                          decoration: new BoxDecoration(
-                            gradient: new LinearGradient(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
@@ -164,7 +164,7 @@ class _PlanDaysPageState extends State<PlanDaysPage> {
                         ),
                       ),
                     ),
-                    new Align(
+                    Align(
                       alignment: Alignment.bottomCenter,
                       child: appBar,
                     ),
@@ -184,7 +184,7 @@ class _PlanDaysPageState extends State<PlanDaysPage> {
               ? Text(getString('plan_days_continue'))
               : Text(getString('plan_days_start')),
           onPressed: !widget.plan.days[currentIndex].completed() ? () => Navigator.of(context).push(
-              new FadeAnimationRoute(builder: (context) => PlanViewerPage(
+              FadeAnimationRoute(builder: (context) => PlanViewerPage(
                 day: widget.plan.days[currentIndex],
                 index: widget.plan.days[currentIndex].firstIncomplete(),
               ))
@@ -209,26 +209,26 @@ class DayPage extends StatefulWidget {
   });
 
   @override
-  _DayPageState createState() => new _DayPageState();
+  _DayPageState createState() => _DayPageState();
 }
 class _DayPageState extends State<DayPage> {
 
   @override
   Widget build(BuildContext context) {
     return OrientationBuilder(
-      builder: (context, orientation) => new ListView(
+      builder: (context, orientation) => ListView(
         children: <Widget>[
-          new Container(
+          Container(
             height: orientation == Orientation.portrait ? fontSize*8 : fontSize*4,
             margin: EdgeInsets.only(
               top: orientation == Orientation.portrait ? fontSize*4 : fontSize*2,
               left: 8.0,
               right: 8.0,
             ),
-            child: new Center(
-              child: new RichText(
+            child: Center(
+              child: RichText(
                 textAlign: TextAlign.center,
-                text: new TextSpan(
+                text: TextSpan(
                   text: widget.startingDate != null
                       ? '${months[widget.startingDate.add(Duration(days: widget.index)).month-1]} ${widget.startingDate.add(Duration(days: widget.index)).day}'
                       : '',
@@ -239,7 +239,7 @@ class _DayPageState extends State<DayPage> {
                           : Theme.of(context).textTheme.body1.color
                   ),
                   children: [
-                    new TextSpan(
+                    TextSpan(
                       text: '\nDay ${widget.index+1}',
                       style: Theme.of(context).textTheme.body1.copyWith(
                         fontSize: fontSize*2,
@@ -251,12 +251,12 @@ class _DayPageState extends State<DayPage> {
             ),
             color: Theme.of(context).canvasColor,
           ),
-          new Card(
-            child: new Column(
+          Card(
+            child: Column(
               children: widget.day.passages.map(
-                      (passage) => new ListTile(
+                      (passage) => ListTile(
                     onTap: () => Navigator.of(context).push(
-                        new FadeAnimationRoute(builder: (context) => PlanViewerPage(
+                        FadeAnimationRoute(builder: (context) => PlanViewerPage(
                           day: widget.day,
                           dayIndex: widget.index,
                           index: widget.day.passages.indexOf(passage),
@@ -264,8 +264,8 @@ class _DayPageState extends State<DayPage> {
                     ).then((onValue) => setState(() {})),
                     contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
                     trailing: passage.completed ? Icon(Icons.check) : null,
-                    title: new RichText(
-                      text: new TextSpan(
+                    title: RichText(
+                      text: TextSpan(
                         text: '${passage.toText()}',
                         style: Theme.of(context).textTheme.body1.copyWith(
                           fontSize: fontSize,
@@ -294,7 +294,7 @@ class DayEditPage extends StatefulWidget {
     }
   );
 
-  _DayEditPageState createState() => new _DayEditPageState();
+  _DayEditPageState createState() => _DayEditPageState();
 
 }
  class _DayEditPageState extends State<DayEditPage> {
@@ -304,7 +304,7 @@ class DayEditPage extends StatefulWidget {
   @override
   void initState() {
     super.initState();
-    tmpDay = widget.day != null ? Day.clone(widget.day) : new Day();
+    tmpDay = widget.day != null ? Day.clone(widget.day) : Day();
   }
 
   Future<void> fetchConfig() async {
@@ -316,41 +316,41 @@ class DayEditPage extends StatefulWidget {
   @override
   Widget build(BuildContext context) {
     var appBar = PreferredSize(
-      child: new SafeArea(
-        child: new Container(
+      child: SafeArea(
+        child: Container(
           height: 56.0,
           alignment: Alignment.center,
-          child: new Row(
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              new Container(
-                child: new IconButton(
-                  icon: new Icon(Icons.clear),
+              Container(
+                child: IconButton(
+                  icon: Icon(Icons.clear),
                   onPressed: () {
                     Navigator.pop(context, null);
                   },
                 ),
                 margin: EdgeInsets.symmetric(horizontal: 4.0),
               ),
-              new Expanded(
-                child: new Container(),
+              Expanded(
+                child: Container(),
                 flex: 4,
               ),
-              new Expanded(
-                child: !addButtonFAB ? new IconButton(
-                  icon: new Icon(Icons.add),
+              Expanded(
+                child: !addButtonFAB ? IconButton(
+                  icon: Icon(Icons.add),
                   onPressed: () => Navigator.of(context).push(
-                      new FadeAnimationRoute(builder: (context) => PassageEditPage(add: true))
+                      FadeAnimationRoute(builder: (context) => PassageEditPage(add: true))
                   ).then((onValue) => setState(() {
                     if(onValue != null)
                       tmpDay.passages.add(onValue);
                   })),
-                ) : new Container(),
+                ) : Container(),
                 flex: 1,
               ),
-              new Container(
-                child: new IconButton(
-                  icon: new Icon(Icons.check),
+              Container(
+                child: IconButton(
+                  icon: Icon(Icons.check),
                   onPressed: () {
                     try {
                       widget.day.applyEdit(
@@ -367,27 +367,27 @@ class DayEditPage extends StatefulWidget {
           ),
         ),
       ),
-      preferredSize: new Size.fromHeight(56.0),
+      preferredSize: Size.fromHeight(56.0),
     );
 
-    return new OrientationBuilder(
-      builder: (context, orientation) => new Scaffold(
-        body: new SafeArea(
-          child: new Stack(
+    return OrientationBuilder(
+      builder: (context, orientation) => Scaffold(
+        body: SafeArea(
+          child: Stack(
             children: <Widget>[
-              new ListView(
+              ListView(
                 children: <Widget>[
-                  new Container(
+                  Container(
                     height: orientation == Orientation.portrait ? fontSize*8 : fontSize*4,
                     margin: EdgeInsets.only(
                       top: orientation == Orientation.portrait ? fontSize*4 : fontSize*2,
                       left: 8.0,
                       right: 8.0,
                     ),
-                    child: new Center(
-                      child: new RichText(
+                    child: Center(
+                      child: RichText(
                         textAlign: TextAlign.center,
-                        text: new TextSpan(
+                        text: TextSpan(
                           text: widget.add ? getString('plan_days_edit_add') : getString('plan_days_edit_edit'),
                           style: Theme.of(context).textTheme.body1.copyWith(
                             fontSize: fontSize*2,
@@ -397,20 +397,20 @@ class DayEditPage extends StatefulWidget {
                     ),
                     color: Theme.of(context).canvasColor,
                   ),
-                  tmpDay.passages != null && tmpDay.passages.isNotEmpty ? new Card(
-                    child: new Column(
+                  tmpDay.passages != null && tmpDay.passages.isNotEmpty ? Card(
+                    child: Column(
                       children: tmpDay.passages.map(
-                              (passage) => new GestureDetector(
+                              (passage) => GestureDetector(
                             onDoubleTap: () => Navigator.of(context).push(
-                                new FadeAnimationRoute(builder: (context) => PlanViewerPage(
+                                FadeAnimationRoute(builder: (context) => PlanViewerPage(
                                   day: tmpDay,
                                   index: tmpDay.passages.indexOf(passage),
                                   edit: true,
                                 ))
                             ).then((onValue) => setState(() {})),
-                            child: new ListTile(
+                            child: ListTile(
                               onTap: () => Navigator.of(context).push(
-                                  new FadeAnimationRoute(builder: (context) => PassageEditPage(
+                                  FadeAnimationRoute(builder: (context) => PassageEditPage(
                                     passage: passage,
                                   ))
                               ).then((onValue) => setState(() {})),
@@ -419,17 +419,17 @@ class DayEditPage extends StatefulWidget {
                                 icon: Icon(Icons.clear),
                                 onPressed: () => showDialog<DialogAction>(
                                     context: context,
-                                    builder: (context) => new AlertDialog(
-                                      title: new Text('Delete This Passage?'),
-                                      content: new Text('Are you sure you want to delete this passage?'
+                                    builder: (context) => AlertDialog(
+                                      title: Text('Delete This Passage?'),
+                                      content: Text('Are you sure you want to delete this passage?'
                                           '\nThis will delete ${passage.toText()} from this plan.'),
                                       actions: <Widget>[
-                                        new FlatButton(
-                                          child: new Text('CANCEL'),
+                                        FlatButton(
+                                          child: Text('CANCEL'),
                                           onPressed: () => Navigator.pop(context, DialogAction.cancel),
                                         ),
-                                        new FlatButton(
-                                          child: new Text('OK'),
+                                        FlatButton(
+                                          child: Text('OK'),
                                           onPressed: () => Navigator.pop(context, DialogAction.confirm),
                                         ),
                                       ],
@@ -446,8 +446,8 @@ class DayEditPage extends StatefulWidget {
                                   }
                                 }),
                               ),
-                              title: new RichText(
-                                text: new TextSpan(
+                              title: RichText(
+                                text: TextSpan(
                                   text: '${passage.toText()}',
                                   style: Theme.of(context).textTheme.body1.copyWith(
                                     fontSize: fontSize,
@@ -458,21 +458,21 @@ class DayEditPage extends StatefulWidget {
                           )
                       ).toList(),
                     ),
-                  ) : new Container(
+                  ) : Container(
                   ),
-                  new Container(height: 84.0),
+                  Container(height: 84.0),
                 ],
               ),
-              appBarAtTop ? new Align(
+              appBarAtTop ? Align(
                 alignment: Alignment.topCenter,
-                child: new Stack(
+                child: Stack(
                   children: <Widget>[
-                    new IgnorePointer(
-                      child: new Align(
+                    IgnorePointer(
+                      child: Align(
                         alignment: Alignment.topCenter,
-                        child: new Container(
-                          decoration: new BoxDecoration(
-                            gradient: new LinearGradient(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Theme.of(context).canvasColor, Theme.of(context).canvasColor.withAlpha(0)],
@@ -483,22 +483,22 @@ class DayEditPage extends StatefulWidget {
                         ),
                       ),
                     ),
-                    new Align(
+                    Align(
                       alignment: Alignment.topLeft,
                       child: appBar,
                     ),
                   ],
                 ),
-              ) : new Align(
+              ) : Align(
                 alignment: Alignment.bottomCenter,
-                child: new Stack(
+                child: Stack(
                   children: <Widget>[
-                    new IgnorePointer(
-                      child: new Align(
+                    IgnorePointer(
+                      child: Align(
                         alignment: Alignment.bottomCenter,
-                        child: new Container(
-                          decoration: new BoxDecoration(
-                            gradient: new LinearGradient(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
@@ -509,7 +509,7 @@ class DayEditPage extends StatefulWidget {
                         ),
                       ),
                     ),
-                    new Align(
+                    Align(
                       alignment: Alignment.bottomCenter,
                       child: appBar,
                     ),
@@ -523,7 +523,7 @@ class DayEditPage extends StatefulWidget {
           icon: Icon(Icons.add),
           label: Text(getString('plan_add_passage')),
           onPressed: () => Navigator.of(context).push(
-              new FadeAnimationRoute(builder: (context) => PassageEditPage(add: true))
+              FadeAnimationRoute(builder: (context) => PassageEditPage(add: true))
           ).then((onValue) => setState(() {
             if(onValue != null)
               tmpDay.passages.add(onValue);

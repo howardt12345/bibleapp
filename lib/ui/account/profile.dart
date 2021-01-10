@@ -72,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ).then((onValue) {
                                 switch(onValue) {
                                   case DialogAction.confirm:
-                                    planManager.wipePlansFromFile();
+                                    planManager.deletePlansFromFile();
                                     auth.signOut();
                                     Navigator.of(context).pop();
                                     break;

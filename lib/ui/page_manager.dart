@@ -17,10 +17,7 @@ bool developerSettings = false;
 const int duration = 300;
 
 String changelog =
-    '- Improved swiping between chapters.'
-    '\n- Fixed several bugs regarding bible navigation.'
-    '\n- Fixed several bugs regarding the Plan page.'
-    '\n- Added Font Spacing as a setting.'
+    '- UPdated code to Flutter 1.17'
     '\n\nKnown Bugs: '
     '\n- Contact the developer if any bugs are found.'
     '\n\nIn Progress:'
@@ -49,14 +46,14 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
   void initState() {
     super.initState();
     fetchConfig().then((void v) {
-      versionsManager = new VersionsManager();
+      versionsManager = VersionsManager();
       versionsManager.initialize(remoteConfig.getString('bible_download'));
     });
-    _controller = new AnimationController(
+    _controller = AnimationController(
       duration: const Duration(milliseconds: duration),
       vsync: this,
     );
-    _listAnimation = new ListAnimation(
+    _listAnimation = ListAnimation(
       controller: _controller,
       items: widget.pages.length,
     );
@@ -66,14 +63,14 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         await showDialog<String>(
           context: context,
-          builder: (BuildContext context) => new AlertDialog(
-            title: new Text("What's new in version ${versionText()}"),
-            content: new GestureDetector(
-              child: new Text(changelog),
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("What's in version ${versionText()}"),
+            content: GestureDetector(
+              child: Text(changelog),
             ),
             actions: <Widget>[
-              new FlatButton(
-                child: new Text('CLOSE'),
+              FlatButton(
+                child: Text('CLOSE'),
                 onPressed: () async {
                   Navigator.of(context).pop();
                 },
@@ -107,7 +104,7 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
     @required Widget second,
     @required bool fade
   }) {
-    return new AnimatedCrossFade(
+    return AnimatedCrossFade(
       duration: const Duration(milliseconds: duration),
       firstChild: first,
       secondChild: second,
@@ -126,22 +123,22 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
   Widget build(BuildContext context) {
     //fetchConfig();
 
-    return new Scaffold(
-      body: new SafeArea(
-        child: new Stack(
+    return Scaffold(
+      body: SafeArea(
+        child: Stack(
           children: <Widget>[
-            new Container(
+            Container(
               color: Theme.of(context).canvasColor,
-              child: new AnimatedBuilder(
+              child: AnimatedBuilder(
                   builder: _buildMenu,
                   animation: _controller
               ),
             ),
-            new Align(
+            Align(
               alignment: Alignment.bottomCenter,
-              child: new Container(
-                decoration: new BoxDecoration(
-                  gradient: new LinearGradient(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [Theme.of(context).canvasColor.withAlpha(0), Theme.of(context).canvasColor],
@@ -150,27 +147,27 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
                 ),
                 height: 56.0,
                 alignment: Alignment.bottomCenter,
-                child: new Row(
+                child: Row(
                   children: [
-                    new Container(
+                    Container(
                       height: 56.0,
                       width: 56.0,
-                      child: new IconButton(
-                        icon: new Icon(Icons.info_outline),
+                      child: IconButton(
+                        icon: Icon(Icons.info_outline),
                         onPressed: () => test(context),
                       ),
                     ),
-                    new Expanded(
-                      child: new Opacity(opacity: 0.0),
+                    Expanded(
+                      child: Opacity(opacity: 0.0),
                       flex: 9,
                     ),
-                    new Container(
+                    Container(
                       height: 56.0,
                       width: 56.0,
-                      child: /*new IconButton(
-                              icon: new Icon(Icons.exit_to_app),
+                      child: /*IconButton(
+                              icon: Icon(Icons.exit_to_app),
                               onPressed: () => exit(0),
-                            )*/new Container(),
+                            )*/Container(),
                     )
 
                   ],
@@ -201,7 +198,7 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
         currentPage = index;
         logEvent('open_page', {'page': index});
         Navigator.of(context).push(
-            new FadeAnimationRoute(builder: (context) => p.page)
+            FadeAnimationRoute(builder: (context) => p.page)
         );
       }) : null,
       child: index == currentPage
@@ -248,15 +245,15 @@ class _PageManagerState extends State<PageManager> with TickerProviderStateMixin
   test(BuildContext context) async {
     showDialog(
       context: context,
-      builder: (BuildContext context) => new AlertDialog(
-        title: new Text('${getString('test_title')} ${versionText().trim()}.'),
-        content: new GestureDetector(
+      builder: (BuildContext context) => AlertDialog(
+        title: Text('${getString('test_title')} ${versionText().trim()}.'),
+        content: GestureDetector(
           onTap: null,
-          child: new Text('Changelog: \n$changelog'),
+          child: Text('Changelog: \n$changelog'),
         ),
         actions: <Widget>[
-          new FlatButton(
-            child: new Text('OK'),
+          FlatButton(
+            child: Text('OK'),
             onPressed: () => Navigator.pop(context, DialogAction.confirm),
           ),
         ],
@@ -278,17 +275,17 @@ String versionText() {
 
 class ListAnimation {
   final AnimationController controller;
-  final List<Animation<double>> animations = new List<Animation<double>>();
+  final List<Animation<double>> animations = List<Animation<double>>();
 
   ListAnimation({
     this.controller,
     int items,
   }) {
     for(int i = 0; i < items; i++) {
-      animations.add(new Tween(begin: 0.0, end: 1.0).animate(
-          new CurvedAnimation(
+      animations.add(Tween(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
             parent: controller,
-            curve: new Interval(
+            curve: Interval(
               i/items,
               (i+1)/items,
               curve: Curves.ease,
